@@ -62,8 +62,8 @@ const curdRouter = require.context('@/components/curd', false, /\.vue$/, 'lazy')
 let curdRoutes = formatRouter(curdRouter, true);
 
 const createRouter = () => new Router({
-    mode: 'hash',
-    // mode: 'history', // require service support
+    // mode: 'hash',
+    mode: 'history', // require service support
     scrollBehavior: () => ({ y: 0 }),
     routes: [...routes, ...curdRoutes]
 })

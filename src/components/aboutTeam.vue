@@ -6,24 +6,27 @@
             <p class="team_header_desc">{{$t('aboutTeam.ourTeamDesc')}}</p>
         </div>
 
-        <div class="team_tabs">
-            <span class="team_tab_slide"></span>
-            <span v-for="(tab, tabIdx) in tabList" class="team_tab"
-                :class="activeTabIdx === tabIdx ? 'active' : ''"
-                @click="selectTab(tabIdx)">{{tab}}</span>
-        </div>
+        <!-- 行政与导师团队 -->
+        <template v-if="false">
+            <div class="team_tabs">
+                <span class="team_tab_slide"></span>
+                <span v-for="(tab, tabIdx) in tabList" class="team_tab"
+                    :class="activeTabIdx === tabIdx ? 'active' : ''"
+                    @click="selectTab(tabIdx)">{{tab}}</span>
+            </div>
 
-        <p class="team_list_title">{{activeTabIdx ? $t('aboutTeam.ourInstructors') : $t('aboutTeam.executiveTeam')}}</p>
-        <ul class="team_list clearfix" >
-            <li class="team_li" v-for="(list, listIdx) in teamList">
-                <img :src="require(`../assets/images/${list.img}`)" />
-                <p class="team_li_name">{{list.name}}</p>
-                <p class="team_li_title">{{list.title}}</p>
-                <p class="team_li_other"
-                    v-for="(other, oidx) in list.other"
-                    :key="oidx">{{other}}</p>
-            </li>
-        </ul>
+            <p class="team_list_title">{{activeTabIdx ? $t('aboutTeam.ourInstructors') : $t('aboutTeam.executiveTeam')}}</p>
+            <ul class="team_list clearfix" >
+                <li class="team_li" v-for="(list, listIdx) in teamList">
+                    <img :src="require(`../assets/images/${list.img}`)" />
+                    <p class="team_li_name">{{list.name}}</p>
+                    <p class="team_li_title">{{list.title}}</p>
+                    <p class="team_li_other"
+                        v-for="(other, oidx) in list.other"
+                        :key="oidx">{{other}}</p>
+                </li>
+            </ul>
+        </template>
 
         <p class="team_join_title">{{$t('aboutTeam.joinUs')}}</p>
         <p class="team_join_desc">{{$t('aboutTeam.joinDesc')}}</p>
@@ -88,6 +91,7 @@
                 ]
             },
             directorList() { //行政团队
+                return [];
                 let zh = this.$i18n.locale === 'zh';
                 return [
                     {
@@ -124,6 +128,7 @@
                 ]
             },
             instructorList() {//导师团队
+                return [];
                 let zh = this.$i18n.locale === 'zh';
                 return [
                     {
@@ -292,6 +297,7 @@
         }
     }
     .team_join_title {
+        margin-top: 60px;
         width: 100%;
         height: 90px;
         line-height: 90px;
