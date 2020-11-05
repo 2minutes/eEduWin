@@ -7,7 +7,7 @@
         <router-view v-if="!$route.meta.keepAlive" v-wechat-title="$route.meta.title" >
         </router-view>
         <!-- </a-spin> -->
-  </div>
+    </div>
 </template>
 
 <script>
