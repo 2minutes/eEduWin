@@ -156,8 +156,6 @@
 
                 editRow: {},
                 tableHeader: columns,
-
-                
             };
         },
         created() {
@@ -175,7 +173,6 @@
                         courseNo: this.courseNo
                     }
                 }).then(res => {
-                    console.log('course:', res);
                     let detail = res.courses.length ? res.courses[0] : [];
                     let descList = detail.courseDesc ? detail.courseDesc : [];
                     descList = descList.map(item => {
@@ -227,7 +224,6 @@
             handleSubmit(e) {
                 e.preventDefault();
                 this.form.validateFields((err, values) => {
-                    console.log('valid:', err, values);
                     if (!err) {
                         let params = values;
                         params.courseNo = this.courseNo;
@@ -242,7 +238,6 @@
                             url: url,
                             params: params,
                         }).then(res => {
-                            console.log('add:', res);
                             if (res.code == 200) {
                                 this.$message.success(desc);
                                 this.detailVisible = false;

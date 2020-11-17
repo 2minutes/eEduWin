@@ -61,8 +61,6 @@
                     if (res.code == 200) {
                         let typeList = res.types ? res.types : [];
                         this.typeList = typeList;
-                    } else {
-                        this.$message.error(res.msg);
                     }
                 });
             },

@@ -105,7 +105,6 @@
                     params: params,
                 }).then(res => {
                     if (res.code != 200) {
-                        this.$message.error(res.msg);
                         this.getCaptcha();
                     } else {
                         this.$message.success(this.zh ? '注册成功，请前往邮箱验证!' : 'register success, please go to email for verification!');

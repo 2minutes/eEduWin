@@ -94,8 +94,6 @@
                         this.$message.success(tip);
                         loginClear();
                         this.$store.dispatch('handleLoginModel', true);
-                    } else {
-                        this.$message.error(res.msg);
                     }
                 });
             },

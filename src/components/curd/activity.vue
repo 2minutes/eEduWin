@@ -362,7 +362,6 @@
                             url: url,
                             params: params,
                         }).then(res => {
-                            console.log('竞赛：', res);
                             if (res.code == 200) {
                                 this.$message.success(msg);
                                 this.initData();

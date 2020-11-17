@@ -335,7 +335,6 @@
                 tableHeader: columns,
 
                 addVisible: false,
-
             };
         },
         created() {
@@ -348,7 +347,6 @@
                 Request({
                     url: 'course/query',
                 }).then(res => {
-                    console.log('course:', res);
                     let courseList = res.courses ? res.courses : [];
                     courseList = courseList.map(item => {
                         item.key = item.courseNo;
@@ -364,7 +362,6 @@
                 Request({
                     url: 'teacher/query',
                 }).then(res => {
-                    console.log('teachers:', res);
                     let teaList = res.teachers ? res.teachers : [];
                     teaList = teaList.map(item => {
                         item.key = item.userNo;
@@ -377,7 +374,6 @@
                 Request({
                     url: 'courseType/query',
                 }).then(res => {
-                    console.log('type:', res);
                     let typeList = res.types ? res.types : [];
                     typeList = typeList.map(item => {
                         item.key = item.typeNo;
@@ -449,7 +445,6 @@
                             url: url,
                             params: params,
                         }).then(res => {
-                            console.log('add:', res);
                             if (res.code == 200) {
                                 this.$message.success(desc);
                                 this.addVisible = false;

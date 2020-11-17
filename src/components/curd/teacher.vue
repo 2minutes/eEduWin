@@ -125,7 +125,6 @@
                 Request({
                     url: 'teacher/query',
                 }).then(res => {
-                    console.log('teachers:', res);
                     let teaList = res.teachers ? res.teachers : [];
                     teaList = teaList.map(item => {
                         item.key = item.userNo;
@@ -139,7 +138,6 @@
                 this.addVisible = true;
             },
             del(record) {
-                console.log('b:', record);
             },
             showAddModal() {
                 this.addVisible = true;
@@ -152,7 +150,6 @@
             handleSubmit(e) {
                 e.preventDefault();
                 this.form.validateFields((err, values) => {
-                    console.log('valid:', err, values);
                     if (!err) {
                         let params = {
                             userNm: values.userNm,
@@ -170,15 +167,12 @@
                             url: url,
                             params: params,
                         }).then(res => {
-                            console.log('add:', res);
                             if (res.code == 200) {
                                 this.$message.success(desc);
                                 this.addVisible = false;
                                 this.form.resetFields();
                                 this.editRow = {};
                                 this.initData();
-                            } else {
-                                this.$message.error(res.desc);
                             }
                         })
                     }
@@ -197,7 +191,6 @@
             },
             beforeUpload(file) {
                 return false;
-                console.log('beforeUpload:', file);
                 let reader = new FileReader();
                 reader.readAsText(file);
                 reader.onload = e => {

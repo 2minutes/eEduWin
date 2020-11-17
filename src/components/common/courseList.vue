@@ -87,8 +87,6 @@
 						let list = res.courses ? res.courses : [];
 						list = this.formatCourseList(list);
 						this.courList = list;
-					} else {
-						this.$message.error(res.msg);
 					}
 				});
 			},

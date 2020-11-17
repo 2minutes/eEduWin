@@ -115,8 +115,6 @@
                         detail.durationEn = duration ? duration + ' Weeks' : '-';
                         Object.assign(detail, this.getCourseDesc(course.courseDesc));
                         this.detail = detail;
-                    } else {
-                        this.$message.error(res.msg);
                     }
                 });
             },

@@ -104,12 +104,9 @@
                         loginId: this.userName
                     },
                 }).then(res => {
-                    // console.log('captcha:', res);
                     if (res.code == 200) {
                         this.codeSrc = res.msg;
                         this.code = '';
-                    } else {
-                        this.$message.error(res.msg);
                     }
                 });
             },
@@ -121,7 +118,6 @@
                         verifyCode: this.code,
                     }
                 }).then(res => {
-                    console.log('mailCode:', res);
                     if (res.code == 200) {
                         this.$message.success(this.zh ? '请查看您的邮箱，通过邮箱里收到的验证码来重置密码!' : 'Please check your e-mail, use the verification code in your inbox to reset the password!');
                         this.mailCode = '';
@@ -199,7 +195,6 @@
                         this.afterLogin();
                     } else {
                         this.getCaptcha();
-                        this.$message.error(res.msg);
                     }
                 });
             },
@@ -212,7 +207,6 @@
                         password: this.password
                     }
                 }).then(res => {
-                    console.log('reset:', res);
                     if (res.code == 200) {
                         this.$message.success(this.zh ? '重置密码成功，请登录!' : 'Password reset successful, please continue to login!');
                         this.pageType = 1;

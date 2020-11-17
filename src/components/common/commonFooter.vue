@@ -66,7 +66,6 @@
                 ]
             },
             toExternalUrl(url, type) {
-                console.log('toExternalUrl:', type)
                 switch(type) {
                     case 'weixin': 
                         this.showQrcodeFlag = true;

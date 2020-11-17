@@ -147,8 +147,6 @@
 
                 editRow: {},
                 tableHeader: columns,
-
-                
             };
         },
         created() {
@@ -166,7 +164,6 @@
                         activityNo: this.activityNo
                     }
                 }).then(res => {
-                    console.log('activity:', res);
                     let detail = res.activities.length ? res.activities[0] : [];
                     let descList = detail.activityDescs ? detail.activityDescs : [];
                     descList = descList.map(item => {
@@ -218,7 +215,6 @@
             handleSubmit(e) {
                 e.preventDefault();
                 this.form.validateFields((err, values) => {
-                    console.log('valid:', err, values);
                     if (!err) {
                         let params = values;
                         params.activityNo = this.activityNo;
@@ -233,7 +229,6 @@
                             url: url,
                             params: params,
                         }).then(res => {
-                            console.log('add:', res);
                             if (res.code == 200) {
                                 this.$message.success(desc);
                                 this.detailVisible = false;

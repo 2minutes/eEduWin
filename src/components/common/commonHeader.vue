@@ -131,8 +131,6 @@
                 }).then(res => {
                     if (res.code == 200) {
                         loginClear();
-                    } else {
-                        this.$message.error(res.desc);
                     }
                 })
             },

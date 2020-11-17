@@ -118,7 +118,6 @@
                 Request({
                     url: 'courseType/query',
                 }).then(res => {
-                    console.log('teachers:', res);
                     let typeList = res.types ? res.types : [];
                     typeList = typeList.map(item => {
                         item.key = item.typeNo;
@@ -132,7 +131,6 @@
                 this.addVisible = true;
             },
             del(record) {
-                console.log('b:', record);
             },
             showAddModal() {
                 this.addVisible = true;
@@ -145,7 +143,6 @@
             handleSubmit(e) {
                 e.preventDefault();
                 this.form.validateFields((err, values) => {
-                    console.log('valid:', err, values);
                     if (!err) {
                         let params = {
                             typeNmCn: values.typeNmCn,
@@ -163,15 +160,12 @@
                             url: url,
                             params: params,
                         }).then(res => {
-                            console.log('add:', res);
                             if (res.code == 200) {
                                 this.$message.success(desc);
                                 this.addVisible = false;
                                 this.form.resetFields();
                                 this.editRow = {};
                                 this.initData();
-                            } else {
-                                this.$message.error(res.desc);
                             }
                         })
                     }

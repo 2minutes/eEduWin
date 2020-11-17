@@ -147,7 +147,6 @@
                 Request({
                     url: 'news/query',
                 }).then(res => {
-                    console.log('news:', res);
                     let newsList = res.news ? res.news : [];
                     newsList = newsList.map(item => {
                         item.key = item.newsNo;

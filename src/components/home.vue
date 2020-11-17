@@ -44,24 +44,24 @@
             </swiper>
         </div>
 
-<!--        <div class="our_services">-->
-<!--            <div class="left">-->
-<!--                <span class="our_title">{{$t('home.mainServicesTitle')}}</span>-->
-<!--                <div class="our_service_cont">-->
-<!--                    <span class="our_service">+ {{$t('home.enrichmentPrograms')}}</span>-->
-<!--                    <span class="our_service_desc">{{$t('home.enrichmentProgramsDesc')}}</span>-->
-<!--                </div>-->
-<!--                <div class="our_service_cont">-->
-<!--                    <span class="our_service">+ {{$t('home.resourceProvider')}}</span>-->
-<!--                    <span class="our_service_desc">{{$t('home.resourceProviderDesc')}}</span>-->
-<!--                </div>-->
-<!--                <div class="our_service_cont">-->
-<!--                    <span class="our_service">+ {{$t('home.collegePreparationGuidance')}}</span>-->
-<!--                    <span class="our_service_desc">{{$t('home.collegePreparationGuidanceDesc')}}</span>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <img class="our_services_bg" src="../assets/images/home_services_bg.jpg">-->
-<!--        </div>-->
+        <!--<div class="our_services">
+            <div class="left">
+                <span class="our_title">{{$t('home.mainServicesTitle')}}</span>
+                <div class="our_service_cont">
+                    <span class="our_service">+ {{$t('home.enrichmentPrograms')}}</span>
+                    <span class="our_service_desc">{{$t('home.enrichmentProgramsDesc')}}</span>
+                </div>
+                <div class="our_service_cont">
+                    <span class="our_service">+ {{$t('home.resourceProvider')}}</span>
+                    <span class="our_service_desc">{{$t('home.resourceProviderDesc')}}</span>
+                </div>
+                <div class="our_service_cont">
+                    <span class="our_service">+ {{$t('home.collegePreparationGuidance')}}</span>
+                    <span class="our_service_desc">{{$t('home.collegePreparationGuidanceDesc')}}</span>
+                </div>
+            </div>
+            <img class="our_services_bg" src="../assets/images/home_services_bg.jpg">
+        </div> -->
 
         <div v-show="notice.id" class="latest_wrap">
             <div class="latest_top">
