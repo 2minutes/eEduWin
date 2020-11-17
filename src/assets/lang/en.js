@@ -4,6 +4,7 @@ export default  {
         userName: 'Full Name',
         email: 'Email Address',
         password: 'Password',
+        confirmPassword: 'Confirm Password',
         code: 'Code',
         getCaptcha: 'get captcha',
 

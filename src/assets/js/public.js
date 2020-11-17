@@ -20,10 +20,15 @@ export function isEmail(email) {
     return regx.test(email);
 }
 export function isPhone(tel) {
-    var regx = /^1[34578]\d{9}$/;
+    var regx = /^1[345789]\d{9}$/;
     return regx.test(tel);
 }
-
+export function isPassword(pass) {
+    const passwordReg = /(?=.*[a-zA-Z])(?=.*\d)[\w\?\$\^\*\(\)\+\{\}\\\|\[\]\.\/@#%~&_=<>]{6,18}/;
+    let test = passwordReg.test(pass);
+    let lengthFlag = pass.length >= 6 && pass.length <= 18;
+    return test && lengthFlag;
+}
 export function loginSave(token, name) {
     store.dispatch('setUserName', name);
     store.dispatch('setToken', token);

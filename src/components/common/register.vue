@@ -20,6 +20,9 @@
                     <input v-model.trim="password" :placeholder="$t('common.password')" type="password"></input>
                 </div>
                 <div class="header_input_wrap">
+                    <input v-model.trim="confirmPassword" :placeholder="$t('common.confirmPassword')" type="password"></input>
+                </div>
+                <div class="header_input_wrap">
                     <input v-model="code" :placeholder="$t('common.code')" class="code" type="text"></input>
                     <img v-if="codeSrc" class="captcha_img" 
                         @click="getCaptcha" 
@@ -46,7 +49,7 @@
 <script>
     import {mapGetters} from 'vuex';
     import {Request} from '@/api/request';
-    import {isEmail} from '@/assets/js/public';
+    import {isEmail, isPassword} from '@/assets/js/public';
     export default {
         data() {
             return {
@@ -54,6 +57,7 @@
                 userName: '',
                 email: '',
                 password: '',
+                confirmPassword: '',
                 externalsArr: [],
                 errTip: '',
                 codeSrc: '',//验证码
@@ -80,6 +84,7 @@
                 }).then(res => {
                     if (res.code == 200) {
                         this.codeSrc = res.msg;
+                        this.code = '';
                     }
                 });
             },
@@ -119,11 +124,17 @@
                 if (!this.password) {
                     return zh ? '请输入密码!' : 'please enter password!';
                 }
+                if (!this.confirmPassword) {
+                    return zh ? '请输入确认密码!' : 'please enter confirm password!';
+                }
                 if (!isEmail(this.email)) {
                     return zh ? '请输入正确的邮箱地址!' : 'please enter the correct Email Address';
                 }
-                if (!/[(a-zA-Z){1,}\d{1,}]{6,18}/.test(this.password)) {
-                    return zh ? '密码必须由英文字母和数字组成，至少6位数!' : 'Password must be at least 6 characters, a combination of number and letters!';
+                if (!isPassword(this.password) || !isPassword(this.confirmPassword)) {
+                    return zh ? '密码必须由英文字母、数字、特殊字符组成，至少6位数!' : 'Password must be at least 6 characters, a combination of number, letters and special characters!';
+                }
+                if (this.password != this.confirmPassword) {
+                    return zh ? '密码和确认密码不一致!' : 'The password and confirmation password do not match!';
                 }
                 if (!this.code) {
                     return zh ? '请输入验证码!' : 'please enter the code';

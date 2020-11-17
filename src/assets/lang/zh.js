@@ -4,6 +4,7 @@ export default {
         userName: '姓名',
         email: '邮箱地址',
         password: '密码',
+        confirmPassword: '确认密码',
         code: '验证码',
         getCaptcha: '获取验证码',
 

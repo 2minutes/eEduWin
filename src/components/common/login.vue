@@ -65,7 +65,7 @@
 <script>
     import {mapGetters} from 'vuex';
     import {Request} from '@/api/request';
-    import {isEmail, loginSave, encodeStr, decodeStr} from '@/assets/js/public';
+    import {isEmail, loginSave, encodeStr, decodeStr, isPassword} from '@/assets/js/public';
     export default {
         data() {
             return {
@@ -233,8 +233,8 @@
                 if (!isEmail(this.userName)) {
                     return zh ? '请输入正确的邮箱地址!' : 'please enter the correct Email Address';
                 }
-                if (!/[(a-zA-Z){1,}\d{1,}]{6,18}/.test(this.password) && this.pageType != 2) {
-                    return zh ? '密码必须由英文字母和数字组成，至少6位数!' : 'Password must be at least 6 characters, a combination of number and letters!';
+                if (!isPassword(this.password) && this.pageType != 2) {
+                    return zh ? '密码必须由英文字母、数字、特殊字符组成，至少6位数!' : 'Password must be at least 6 characters, a combination of number, letters and special characters!';
                 }
                 if (!this.code && this.pageType != 3) {
                     return zh ? '请输入验证码!' : 'please enter the code';
