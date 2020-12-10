@@ -5,7 +5,9 @@
             <div class="course_header_pbl clearfix">
                 <p class="pbl_title">{{$t('course.projectBasedLearning')}}</p>
                 <p class="pbl_desc">{{$t('course.projectBasedLearningDesc')}}</p>
-                <span class="pbl_learn" @click="toPBLPoster">{{$t('course.learnAboutPbl')}}</span>
+                <a class="pbl_learn" :href="pblUrl" 
+                    :download="(zh ? 'PBL简介' : 'PBL_Introduction') + '.pdf'">
+                    {{$t('course.learnAboutPbl')}}</a>
             </div>
             <div class="pbl_intro clearfix">
                 <ul class="pbl_charas clearfix">
@@ -65,6 +67,9 @@
                 });
             },
             toPBLPoster() {//跳转到PBL海报页
+                let url = this.pblUrl;
+                
+                // window.open('http://www.eeduwin.com/static/files/PBL-en.pdf')
             },
             toPosition(refName) {//跳转到页面相应位置
                 document.getElementById(refName).scrollIntoView({behavior: 'smooth'});
@@ -148,7 +153,13 @@
                         value: 'tuto',
                     }
                 ];
-            }
+            },
+            pblUrl() {
+                return `../../static/files/PBL-${this.zh ? 'zh' : 'en'}.pdf`;
+            },
+            zh() {
+                return this.$i18n.locale == 'zh';
+            },
         },
     }
 </script>
