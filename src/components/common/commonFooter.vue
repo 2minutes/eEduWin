@@ -26,6 +26,7 @@
         </div>
         <div class="footer_bottom">
             <span class="copyright">&copy; 2020 eEduWin, All Rights Reserved.</span>
+            <a href="http://beian.miit.gov.cn/" target="__blank" class="icp">备案号：沪ICP备16001846号-2</a>
             <span class="terms">Terms of Service</span>
             <span>Privacy Policy</span>
         </div>
@@ -226,6 +227,10 @@
                 &.terms {
                     margin-left: 40px;
                 }
+            }
+            .icp {
+                float: left;
+                margin-left: 40px;
             }
         }
     }
