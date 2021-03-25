@@ -49,6 +49,10 @@
                         title: '通告',
                         key: 'notice',
                         path: '/curd/notice',
+                    }, {
+                        title: '视频',
+                        key: 'video',
+                        path: '/curd/video'
                     }
                 ]
             }, 

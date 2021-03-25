@@ -28,6 +28,9 @@ export default {
         login: '登录',
         register: '注册',
         top: '置顶',
+        myCourses: '我的课程',
+        exit: '退出',
+        hi: '你好',
     },
     footer: {
         contactUs: '联系我们',
@@ -342,5 +345,23 @@ export default {
         confirmEmail: '正在验证电子邮箱',
         verifyEmail: '即刻确认',
     },
+    video: {
+        course: '课程',
+        notesAndLinks: '笔记&链接',
+        allContent: '所有内容',
+        clickToPlay: '点击观看录像',
+        ifForgetPassword: '如果忘记课程密码，请联系管理员获取',
+        schedule: '时间安排',
+        today: '本月',
+        back: '上月',
+        next: '下月',
+        month: '月',
+        agenda: '议程表',
+        watch: '播放视频',
+        password: '请输入密码',
+        passwordRequired: '请输入密码',
+        gotPassword: "如果你已获得密码，请在下方输入。",
+        empty: '暂时没有课程视频'
+    }
 };
 // export default zh;

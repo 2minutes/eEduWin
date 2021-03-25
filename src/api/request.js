@@ -29,5 +29,16 @@ export function Request(opts){
     if (opts.header) {
         requestParams.header = opts.header;
     }
+    if (opts.timeout != undefined) {
+        requestParams.timeout = opts.timeout;
+    }
+    if (opts.uploadProgress) {
+        requestParams.onUploadProgress = opts.uploadProgress;
+    }
+    if (opts.contentType) {
+        requestParams.header = {
+            'Content-Type': opts.contentType
+        }
+    }
     return request(requestParams);
 }

@@ -84,7 +84,6 @@
                         v-decorator="[
                             'courseOwner',
                             {
-                                rules: [{ required: true, message: '请选择导师' }],
                                 initialValue: editRow.courseOwner
                             },
                         ]"
@@ -434,6 +433,9 @@
                 this.form.validateFields((err, values) => {
                     if (!err) {
                         let params = values;
+                        if (!params.courseOwner) {
+                            params.courseOwner = '';
+                        }
                         let url = 'course/addCourse';
                         let desc = '新增成功!';
                         if (this.editRow.courseNo) {

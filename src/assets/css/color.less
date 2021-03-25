@@ -1,0 +1,44 @@
+@colors: #00e5ee, #7fffd4, #458B74, #b4eeb4, #4eee94, 
+    #90ee90, #7b68ee, #00ee76, #0000cd, #00ee00,
+    #836fff, #ff6a6a, #8b658b, #1e90ff, 
+    #ff8247, #daa520, #00ff7f, #7fff00, #b22222, 
+    #ffc1c1, #c0ff3e, #ff6347, #cd5c5c, 
+    #ffd700, #00ced1, #ff3030, #8b4513, #32cd32, 
+    #0ff, #ff1493, #a0522d, #ffc125, 
+    #eeb043, #58c0c1, #e03c3a, #673aca, #eb913a,
+    #3d93f7, #d74494, #305ae2, #0f289a, #286e6f,
+    #3b7624, #90246a, #a16b24, #800000, #f00,
+    #008000,  #f0f, #800080, #808000, #000080,
+    #008080, #ffa500, #8a2be2, #a52a2a, #5f9ea0,
+    #ff7f50, #6495ed, #d2691e, #bdb76b, #006400,
+    #ffa07a, #ba55d3, #9370db, #da70d6, #9acd32
+    ;
+@colorsNm: turquoise2, aquamarine1, aquamarine4, darkSeaGreen2, seaGreen2,
+    paleGreen2, mediumSlateBlue, springGreen2, mediumBlue, green2,
+    slateBlue1, indianRed1, darkGoldenrod4, dodgerBlue1,
+    sienna1, goldenrod, springGreen1, chartreuse, firebrick,
+    rosyBrown1, oliveDrab1, tomato1, indianRed,
+    gold1, darkTurquoise, firebrick1, saddleBrown, limeGreen,
+    cyan1, deepPink1, sienna, goldenrod1, 
+    custom1, custom2, custom3, custom4, custom5,
+    custom6, custom7, custom8, custom9, custom10,
+    custom11, custom12, custom13, maroon, red,
+    green, fuchsia, purple, olive, navy,
+    teal, orange, blueviolet, brown, cadetblue,
+    coral, cornflowerblue, chocolate, darkkhaki, darkgreen,
+    lightsalmon, mediumorchid, mediumpurple, orchid, yellowgreen
+    ;
+
+@len: length(@colors);
+.loop(@index) when(@index <= @len) {
+    .backgroundColor(extract(@colorsNm, @index), extract(@colors, @index));
+    .loop(@index + 1);
+}
+.loop(1);
+.backgroundColor(@selector, @color) {
+    .back_ {
+        &@{selector} {
+            background: @color;
+        }
+    }
+}

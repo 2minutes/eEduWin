@@ -13,12 +13,14 @@ let routeTitle = {
     services: 'Admission Services',
     club: 'eEduWinner Club',
     home: 'eEduWin',
+    schedule: 'schedule',
     'curd-news': '新闻管理',
     'curd-type': '类型管理',
     'curd-teacher': '导师管理',
     'curd-course': '课程管理',
     'curd-activity': '活动管理',
     'curd-notice': '通告管理',
+    'curd-video': '视频管理'
 };
 
 function formatRouter(routerArr, curdFlag = false) {
@@ -31,7 +33,7 @@ function formatRouter(routerArr, curdFlag = false) {
         let component = routerArr(fileName).default;
         let title = routeTitle[routerName] ? routeTitle[routerName] : routerName;
         let routeItem = {
-            path: (curdFlag ? '/curd' : '') + routerSplit[1],
+            path: routerName === defaultPath ? '/' : (curdFlag ? '/curd' : '') + routerSplit[1],
             name: routerName,
             meta: {
                 title: title,
@@ -40,11 +42,6 @@ function formatRouter(routerArr, curdFlag = false) {
         };
         if (keepAliveArr.includes(routerName)) {
             routeItem.meta.keepAlive = true;
-        }
-        if (routerName === defaultPath) {
-            defaultRouter = JSON.parse(JSON.stringify(routeItem));
-            defaultRouter.path = '/';
-            defaultRouter.component = () => routerArr(fileName);
         }
         return routeItem;
     });
@@ -56,7 +53,6 @@ let keepAliveArr = ['enhancement'];
 let defaultRouter = null;
 
 let routes = formatRouter(requireRoutes);
-routes.push(defaultRouter);
 
 const curdRouter = require.context('@/components/curd', false, /\.vue$/, 'lazy');
 let curdRoutes = formatRouter(curdRouter, true);
@@ -66,7 +62,8 @@ const createRouter = () => new Router({
     mode: 'history', // require service support
     scrollBehavior: () => ({ y: 0 }),
     routes: [...routes, ...curdRoutes]
-})
+});
+// console.log('router:', routes, curdRoutes)
 
 const router = createRouter()
 

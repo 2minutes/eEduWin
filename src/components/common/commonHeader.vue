@@ -30,8 +30,21 @@
             <img class="icon_lang" src="../../assets/images/icon_lang_en.png"
                 /> -->
             <template v-if="userName">
-                <span class="username" @click="toAccount">{{$t("header.welcome")}} {{userName}}</span>
-                <img class="icon_exit" @click="loginOut" src="../../assets/images/icon_exit.png" />
+                <span @click="handlePanel" class="avator pointer">{{userName[0]}}</span>
+                <div v-show="panelFlag" class="panel clearfix">
+                    <p class="panel_item" @click="toAccount">
+                        <span class="panel_icon list"></span>
+                        <span class="panel_txt">{{$t('header.hi')}}, Hanpu_Philip!</span>
+                    </p>
+                    <p class="panel_item" @click="toSchedule">
+                        <span class="panel_icon people"></span>
+                        <span class="panel_txt">{{$t('header.myCourses')}}</span>
+                    </p>
+                    <p class="panel_item" @click="loginOut">
+                        <span class="panel_icon exit"></span>
+                        <span class="panel_txt">{{$t('header.exit')}}</span>
+                    </p>
+                </div>
             </template>
             <template v-else>
                 <span class="sign_btn" @click="handleLoginModel">{{$t("header.login")}}</span>
@@ -78,6 +91,8 @@
             return {
                 currRoute: this.$route.name,
                 topFlag: false,
+
+                panelFlag: false,
             }
         },
         created() {
@@ -90,7 +105,7 @@
         methods: {
             toHome() {
                 this.$router.push({
-                    path: '/home',
+                    path: '/',
                 });
             },
             toAccount() {
@@ -139,6 +154,11 @@
                     path: '/cart',
                 });
             },
+            toSchedule() {
+                this.$router.push({
+                    path: '/schedule'
+                });
+            },
 
             showContactModel() {
                 this.$store.dispatch('handleContactModel', true);
@@ -162,6 +182,10 @@
                 } else {
                     this.topFlag = false;
                 }
+            },
+
+            handlePanel() {
+                this.panelFlag = !this.panelFlag;
             }
         },
         destroyed() {
@@ -301,6 +325,7 @@
           }
         }
         .header_right {
+            position: relative;
             float: right;
             .icon_lang, icon_cart, .icon_exit {
                 float: left;
@@ -353,6 +378,74 @@
                 height: 30px;
                 line-height: 30px;
                 cursor: pointer;
+            }
+            .avator {
+                width: 30px;
+                height: 30px;
+                line-height: 30px;
+                font-size: 14px;
+                text-align: center;
+                background: #887066;
+                color: #fff;
+                border-radius: 50%;
+            }
+        }
+        .panel {
+            position: absolute;
+            right: 10px;
+            bottom: -80px;
+            padding-bottom: 10px;
+            padding-top: 10px;
+            width: 200px;
+            background: #fff;
+            border-radius: 2px;
+            .panel_item {
+                width: 100%;
+                height: 40px;
+                cursor: pointer;
+                &:hover {
+                    .panel_txt {
+                        color: #8f7445;
+                    }
+                    .panel_icon.list {
+                        background: url('../../assets/images/icon_list_active.png') no-repeat center;
+                        background-size: 16px 16px;
+                    }
+                    .panel_icon.people {
+                        background: url('../../assets/images/icon_peoples_active.png') no-repeat center;
+                        background-size: 16px 16px;
+                    }
+                    .panel_icon.exit {
+                        background: url('../../assets/images/icon_exit_active.png') no-repeat center;
+                        background-size: 16px 16px;
+                    }
+                }
+                .panel_icon {
+                    float: left;
+                    margin-top: 12px;
+                    margin-right: 0;
+                    width: 16px;
+                    height: 16px;
+                    &.list {
+                        background: url('../../assets/images/icon_list.png') no-repeat center;
+                        background-size: 16px 16px;
+                    }
+                    &.people {
+                        background: url('../../assets/images/icon_peoples.png') no-repeat center;
+                        background-size: 16px 16px;
+                    }
+                    &.exit {
+                        background: url('../../assets/images/icon_exit.png') no-repeat center;
+                        background-size: 16px 16px;
+                    }
+                }
+                .panel_txt {
+                    float: left;
+                    height: 40px;
+                    line-height: 40px;
+                    font-size: 14px;
+                    color: #666;
+                }
             }
         }
     }

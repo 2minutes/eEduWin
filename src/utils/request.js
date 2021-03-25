@@ -26,7 +26,7 @@ service.interceptors.request.use(
             config.headers['Content-Type'] = config.header['Content-Type'];
         }
         if (config.method === 'post') {
-            if (config.headers['Content-Type'] !== 'application/json') {
+            if (config.headers['Content-Type'].indexOf('application/json') == -1) {
                 config.data = config.headers['Content-Type'] == 'multipart/form-data' ? config.data : QS.stringify(config.data);
             } else {
                 config.data = config.data;
@@ -39,7 +39,6 @@ service.interceptors.request.use(
     },
     error => {
         // do something with request error
-        console.log(error) // for debug
         return Promise.reject(error)
     }
 );
@@ -52,7 +51,7 @@ service.post = function post(url, params) {
             resolve(res.data);
         }).catch(err => {
             reject(err.data);
-        })
+        });
     });
 }
 
@@ -68,13 +67,7 @@ service.interceptors.response.use(response => {
         hideLoading();
     }
     return res;
-    // if (res.code != 200) {
-    //     return Promise.reject(new Error(res.desc));
-    // } else {
-    //     return res;
-    // }
 }, error => {
-    console.log('error:', error);
     return Promise.reject(error);
 });
 

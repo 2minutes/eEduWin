@@ -39,7 +39,7 @@
                             'typeNmEn',
                             { 
                                 rules: [{ required: true, message: '请输入类型名称（英文）' }],
-                                initialValue: editRow.lastNm 
+                                initialValue: editRow.typeNmEn 
                             },
                         ]"
                         />

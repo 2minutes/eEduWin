@@ -13,6 +13,7 @@ const store = new Vuex.Store({
         showRegisterFlag: false, //是否显示注册弹窗
         showNewFlag: false, //是否显示新闻弹窗
         loading: false, //是否显示加载状态
+        url: '',//视频url
     },
     getters: {
         showContactFlag: state => state.showContactFlag,
@@ -22,33 +23,37 @@ const store = new Vuex.Store({
         token: state => state.token,
         userName: state => state.userName,
         loading: state => state.loading,
+        url: state => state.url,
     },
     actions: {//异步，
-        setUserName({commit, state}, name) {
+        setUserName({commit}, name) {
             if (name) {
                 commit('setUserName', name);
             } else {
                 commit('clearUserName');
             }
         },
-        setToken({commit, state}, token) {
+        setToken({commit}, token) {
             commit('setToken', token);
         },
-        handleContactModel({commit, state}, flag) {
+        handleContactModel({commit}, flag) {
             commit('setShowContactFlag', flag);
         },
-        handleLoginModel({commit, state}, flag) {
+        handleLoginModel({commit}, flag) {
             commit('setShowLoginFlag', flag);
         },
-        handleRegisterModel({commit, state}, flag) {
+        handleRegisterModel({commit}, flag) {
             commit('setShowRegisterFlag', flag);
         },
-        handleNewModel({commit, state}, flag) {
+        handleNewModel({commit}, flag) {
             commit('setShowNewFlag', flag);
         },
-        handleLoading({commit, state}, flag) {
+        handleLoading({commit}, flag) {
             commit('setLoading', flag);
         },
+        setUrl({commit}, url) {
+            commit('setUrl', url);
+        }
     },
     mutations: {
         setUserName(state, name) {
@@ -83,6 +88,9 @@ const store = new Vuex.Store({
         setLoading(state, flag) {
             state.loading = flag;
         },
+        setUrl(state, url) {
+            state.url = url;
+        }
     },
 });
 

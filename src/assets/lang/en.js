@@ -28,6 +28,9 @@ export default  {
         login: 'LOGIN',
         register: 'REGISTER',
         top: 'TOP',
+        myCourses: 'My courses',
+        exit: 'Exit',
+        hi: 'Hi',
     },
     footer: {
         contactUs: 'CONTACT US',
@@ -344,6 +347,24 @@ export default  {
         confirmEmail: 'A Confirmation email has been sent to',
         verifyEmail: 'Verify my email',
     },
+    video: {
+        course: 'Courses',
+        notesAndLinks: 'Notes & Links',
+        allContent: 'All Contents',
+        clickToPlay: 'Click to play',
+        ifForgetPassword: 'If you forget the course password, please contact administrator for it.',
+        schedule: 'Schedule',
+        today: 'Today',
+        back: 'Back',
+        next: 'Next',
+        month: 'Month',
+        agenda: 'Agenda',
+        watch: 'Watch Video',
+        password: 'Password',
+        passwordRequired: 'Password Required',
+        gotPassword: "If you've got it, enter it below.",
+        empty: 'There is no course video at the moment.'
+    }
 }
 
 // export default en;

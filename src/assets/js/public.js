@@ -1,4 +1,5 @@
 import store from '@/store/index';
+import {message} from 'ant-design-vue';
 
 export function loading() {
     store.dispatch('handleLoading', true);
@@ -138,4 +139,20 @@ export function getFormParams(params) {
         formData.append(key, params[key]);
     }
     return formData;
+}
+//提示
+export function error(txt = '', duration = 3, fn) {
+    message.error(txt, duration, () => {
+        fn && fn();
+    });
+}
+export function success(txt = '', duration = 3, fn) {
+    message.success(txt, duration, () => {
+        fn && fn();
+    });
+}
+export function warn(txt = '', duration = 3, fn) {
+    message.warn(txt, duration, () => {
+        fn && fn();
+    });
 }
