@@ -33,6 +33,7 @@
         <CourseList :level="'0'" :typeList="typeList" :courTitle="$t('course.foundationCourses')" :elemId="'foundation'" />
         <CourseList :level="'1'" :typeList="typeList" :courTitle="$t('course.capstoneCourses')" :elemId="'capstone'" />
         <CourseList :level="'2'" :typeList="typeList" :courTitle="$t('course.enrichmentCourses')" :elemId="'enrichment'" />
+        <CourseList :level="'3'" :typeList="typeList" :courTitle="$t('course.talkCourses')" :elemId="'talk'" />
 
         <CommonFooter />
     </div>
@@ -52,8 +53,9 @@
                 master: [],
             }
         },
-        mounted() {
+        created() {
             this.getCourseType();
+            this.$root.addTj(4);
         },
         methods: {
             getCourseType() {//获取课程类型
@@ -128,6 +130,10 @@
                         name: this.$t('course.enrichmentCourses'),
                         desc: this.$t('course.enrichmentCoursesDesc'),
                         id: 'enrichment',
+                    }, {
+                        name: this.$t('course.talkCourses'),
+                        desc: this.$t('course.talkCoursesDesc'),
+                        id: 'talk',
                     }
                 ]
             },

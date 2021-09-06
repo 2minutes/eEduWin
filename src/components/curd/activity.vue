@@ -1,259 +1,125 @@
 <template>
     <div class="curd clearfix">
-        <Menu />
-        <div class="curd_right">
-            <a-button type="primary" @click="showAddModal">
+        <div class="curd_right"> 
+            <el-button type="primary" @click="showAddModal" size="small">
                 新增活动
-            </a-button>
-            <a-table :columns="tableHeader" 
-                :data-source="list">
-                <a slot="name" slot-scope="text">{{ text }}</a>
-                <span slot="customTitle">Name</span>
-                <span slot="tags" slot-scope="record">
-                    <a-tag color="red" @click="detail(record)">活动描述</a-tag>
-                    <a-tag color="green" @click="edit(record)">修改</a-tag>
-                    <a-tag color="red" @click="del(record)">删除</a-tag>
-                </span>
-            </a-table>
+            </el-button>
+            <Table v-show="list.length" :showSelect="false"
+                :tableHeader="tableHeader" :tableData="list" 
+                :total="1" :page="1" :pageSize="10"/>
         </div>
-        <a-modal
-            :title="`${editRow.activityNo ? '修改' : '新增'}活动`"
-            :visible="addVisible"
-            @cancel="handleCancel"
-            :footer="null"
-            :width="1000"
-            >
-            <a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" @submit="handleSubmit">
-                <a-form-item label="活动名称（中文）">
-                    <a-input
-                        v-decorator="[
-                            'activityNmZh',
-                            { 
-                                rules: [{ required: true, message: '请输入活动名称（中文）' }],
-                                initialValue: editRow.activityNmZh 
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="活动名称（英文）">
-                    <a-input
-                        v-decorator="[
-                            'activityNmEn',
-                            { 
-                                rules: [{ required: true, message: '活动名称（英文）' }],
-                                initialValue: editRow.activityNmEn 
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="报名截止时间">
-                    <a-date-picker
-                        placeholder="报名截止时间"
-                        show-time
-                        :allowClear="true"
-                        :format="'yyyy-MM-DD HH:mm:ss'"
-                        :valueFormat="'yyyy-MM-DD HH:mm:ss'"
-                        v-decorator="[
-                            'submitEndTs',
-                            { 
-                                rules: [{ required: true, message: '请选择报名截止时间' }],
-                                initialValue: editRow.submitEndTs
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="活动类型">
-                    <a-select
-                        @change="handleTypeChange"
-                        v-decorator="[
-                            'activityTp',
-                            { 
-                                rules: [{ required: true, message: '请选择活动类型' }],
-                                initialValue: editRow.activityTp 
-                            },
-                        ]"
-                        >
-                        <a-select-option :value="'0'">
-                            竞赛
-                        </a-select-option>
-                        <a-select-option :value="'1'">
-                            志愿者活动
-                        </a-select-option>
-                    </a-select>
-                </a-form-item>
-                <a-form-item required label="活动图片">
-                    <img class="pic" v-if="editRow.activityLogo" :src="editRow.activityLogo" @click="handlePreview(editRow.activityLogo)" />
-                    <input class="file_btn" name="file" type="file" 
-                        accept="image/png,image/gif,image/jpeg"
+        <el-dialog
+            :title="(form.activityNo ? '修改' : '新增') + '活动'"
+            :visible.sync="addVisible"
+            width="820px"
+            :before-close="handleCancel">
+            <el-form :model="form" :rules="rules" ref="form" label-width="180px">
+                <el-form-item label="活动名称（中文）" prop="activityNmZh">
+                    <el-input v-model="form.activityNmZh" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="活动名称（英文）" prop="activityNmEn">
+                    <el-input v-model="form.activityNmEn" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="报名截止时间" prop="submitEndTs">
+                    <el-date-picker
+                        v-model="form.submitEndTs"
+                        type="datetime"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        placeholder="报名截止时间">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="活动类型" prop="activityTp">
+                    <el-select v-model="form.activityTp" placeholder="请选择" @change="handleTypeChange">
+                        <el-option label="竞赛" value="0" ></el-option>
+                        <el-option label="志愿者活动" value="1" ></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="活动图片">
+                    <el-image  v-if="form.activityLogo" class="pic"
+                        :src="form.activityLogo" @click="handlePreview(form.activityLogo)" >
+                    </el-image>
+                    <input class="file_btn" name="file" type="file" ref="file"
+                        accept="image/png,image/gif,image/jpeg" 
                         @change="handleChange"/>
-                </a-form-item>
-
-                <!-- 竞赛 -->
+                </el-form-item>
                 <template v-if="activityTp === '0'">
-                    <a-form-item label="竞赛主题（中文）">
-                        <a-textarea :autoSize="{minRows:2, maxRows: 6}"
-                            :allowClear="true"
-                            placeholder="500字以内"
-                            v-decorator="[
-                                'activityThemeZh',
-                                { 
-                                    rules: [{ required: true, message: '请输入中文活动描述' }],
-                                    initialValue: editRow.activityThemeZh
-                                },
-                            ]"
-                            />
-                    </a-form-item>
-                    <a-form-item label="竞赛主题（英文）">
-                        <a-textarea :autoSize="{minRows:2, maxRows: 6}"
-                            :allowClear="true"
-                            placeholder="500字以内"
-                            v-decorator="[
-                                'activityThemeEn',
-                                { 
-                                    rules: [{ required: true, message: '请输入英文活动描述' }],
-                                    initialValue: editRow.activityThemeEn
-                                },
-                            ]"
-                            />
-                    </a-form-item>
-                    <a-form-item label="竞赛奖励（中文）">
-                        <a-textarea :autoSize="{minRows:2, maxRows: 6}"
-                            :allowClear="true"
-                            placeholder="多条数据用#分隔,100字以内"
-                            v-decorator="[
-                                'prizeZh',
-                                { 
-                                    rules: [{ required: true, message: '请输入中文活动奖励' }],
-                                    initialValue: editRow.prizeZh
-                                },
-                            ]"
-                            />
-                    </a-form-item>
-                    <a-form-item label="竞赛奖励（英文）">
-                        <a-textarea :autoSize="{minRows:2, maxRows: 6}"
-                            :allowClear="true"
-                            placeholder="多条数据用#分隔,100字以内"
-                            v-decorator="[
-                                'prizeEn',
-                                { 
-                                    rules: [{ required: true, message: '请输入英文活动奖励' }],
-                                    initialValue: editRow.prizeEn
-                                },
-                            ]"
-                            />
-                    </a-form-item>
+                    <el-form-item label="竞赛主题（中文）" prop="activityThemeZh">
+                        <el-input v-model="form.activityThemeZh" type="textarea" :autoSize="{minRows:2}"
+                            placeholder="500字以内"></el-input>
+                    </el-form-item>
+                    <el-form-item label="竞赛主题（英文）" prop="activityThemeEn">
+                        <el-input v-model="form.activityThemeEn" type="textarea" :autoSize="{minRows:2}"
+                            placeholder="500字以内"></el-input>
+                    </el-form-item>
+                    <el-form-item label="竞赛奖励（中文）" prop="prizeZh">
+                        <el-input v-model="form.prizeZh" type="textarea" :autoSize="{minRows:2}"
+                            placeholder="多条数据用#分隔,100字以内"></el-input>
+                    </el-form-item>
+                    <el-form-item label="竞赛奖励（英文）" prop="prizeEn">
+                        <el-input v-model="form.prizeEn" type="textarea" :autoSize="{minRows:2}"
+                            placeholder="多条数据用#分隔,100字以内"></el-input>
+                    </el-form-item>
                 </template>
-
-                <a-form-item label="参与者年龄段（中文）">
-                    <a-textarea :autoSize="{minRows:2, maxRows: 6}"
-                        :allowClear="true"
-                        placeholder="多条数据用#分隔"
-                        v-decorator="[
-                            'attenderGradleZh',
-                            { 
-                                rules: [{ required: true, message: '请输入参与者年龄段（中文）' }],
-                                initialValue: editRow.attenderGradleZh
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="参与者年龄段（英文）">
-                    <a-textarea :autoSize="{minRows:2, maxRows: 6}"
-                        :allowClear="true"
-                        placeholder="多条数据用#分隔"
-                        v-decorator="[
-                            'attenderGradleEn',
-                            { 
-                                rules: [{ required: true, message: '请输入参与者年龄段（英文）' }],
-                                initialValue: editRow.attenderGradleEn
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                
-                
-
-                <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
-                    <a-button type="primary" html-type="submit">
-                        {{editRow.activityNo ? '修改' : '新增'}}
-                    </a-button>
-                </a-form-item>
-            </a-form>
-        </a-modal> 
-        <a-modal :visible="previewVisible" :footer="null" 
+                <el-form-item label="参与者年龄段（中文）" prop="attenderGradleZh">
+                    <el-input v-model="form.attenderGradleZh"  type="textarea" :autoSize="{minRows:2}"
+                        placeholder="多条数据用#分隔"></el-input>
+                </el-form-item>
+                <el-form-item label="参与者年龄段（英文）" prop="attenderGradleEn">
+                    <el-input v-model="form.attenderGradleEn"  type="textarea" :autoSize="{minRows:2}"
+                        placeholder="多条数据用#分隔"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="handleCancel">关 闭</el-button>
+                <el-button type="primary" @click="handleSubmit">{{form.activityNo ? '修改' : '新增'}}</el-button>
+            </div>
+        </el-dialog>
+        <!-- 图片预览 -->
+        <el-dialog :visible.sync="previewVisible" :footer="null" 
             @cancel="handlePreview()">
             <img alt="example" style="width: 100%" :src="previewImgUrl" />
-        </a-modal>
+        </el-dialog>
     </div>
 </template>
 <script>
-    import {Request, Post} from '@/api/request';
-    import axios from 'axios';
-    import baseUrl from '@/utils/baseUrl';
-    import Menu from '@/components/common/menu';
-    import {getToken, loginClear} from '@/assets/js/public';
-    import {Modal} from 'ant-design-vue';
-    const columns = [
-        {
-            title: '活动编号',
-            dataIndex: 'activityNo',
-            key: 'activityNo',
-        }, {
-            title: '中文名称',
-            dataIndex: 'activityNmZh',
-            key: 'activityNmZh',
-        }, {
-            title: '英文名称',
-            dataIndex: 'activityNmEn',
-            key: 'activityNmEn',
-        }, {
-            title: '活动类型',
-            key: 'activityTpStr',
-            dataIndex: 'activityTpStr',
-        }, {
-            title: '报名截止时间',
-            key: 'submitEndTs',
-            dataIndex: 'submitEndTs',
-        }, {
-            title: '报名人要求（中文）',
-            key: 'attenderGradleZh',
-            dataIndex: 'attenderGradleZh',
-        }, {
-            title: '报名人要求（英文）',
-            key: 'attenderGradleEn',
-            dataIndex: 'attenderGradleEn',
-        }, {
-            title: '竞赛主题（中文）',
-            key: 'activityThemeZh',
-            dataIndex: 'activityThemeZh',
-        }, {
-            title: '竞赛主题（中文）',
-            key: 'activityThemeEn',
-            dataIndex: 'activityThemeEn',
-        }, {
-            title: '竞赛奖励（中文）',
-            key: 'prizeZh',
-            dataIndex: 'prizeZh',
-        }, {
-            title: '竞赛奖励（英文）',
-            key: 'prizeEn',
-            dataIndex: 'prizeEn',
-        }, {
-            title: '操作',
-            key: 'action',
-            scopedSlots: { customRender: 'tags' },
-        }
-    ];
+    import {Request} from '@/api/request';
+    import Table from '@/components/common/table';
+    import {error, success, warn} from '@/assets/js/public';
+    
     export default {
         data() {
             return {
-                formLayout: 'horizontal',
-                form: this.$form.createForm(this, { name: 'news' }),
+                form: {
+                    activityNmZh: '',
+                    activityNmEn: '',
+                    submitEndTs: '',
+                    activityTp: '',
+                    activityThemeZh: '',
+                    activityThemeEn: '',
+                    prizeZh: '',
+                    prizeEn: '',
+                    attenderGradleZh: '',
+                    attenderGradleEn: '',
+                },
+                rules: {
+                    activityNmZh: {required: true, message: '请输入活动名称（中文）', trigger: 'blur'},
+                    activityNmEn: {required: true, message: '请输入活动名称(英文)', trigger: 'blur'},
+                    submitEndTs: {required: true, message: '请选择报名截止时间', trigger: 'blur'},
+                    activityTp: {required: true, message: '请选择活动类型', trigger: 'blur'},
+                    activityThemeZh: {required: true, message: '请输入中文活动描述', trigger: 'blur'},
+                    activityThemeEn: {required: true, message: '请输入英文活动描述', trigger: 'blur'},
+                    prizeZh: {required: true, message: '请输入中文活动奖励', trigger: 'blur'},
+                    prizeEn: {required: true, message: '请输入英文活动奖励', trigger: 'blur'},
+                    attenderGradleZh: {required: true, message: '请输入参与者年龄段（中文）', trigger: 'blur'},
+                    attenderGradleEn: {required: true, message: '请输入参与者年龄段（英文）', trigger: 'blur'},
+                },
 
                 list: [],
                 file: null,
-                editRow: {},
-                tableHeader: columns,
+                tableHeader: [],
 
                 addVisible: false,
                 previewVisible: false,
@@ -263,9 +129,79 @@
             };
         },
         created() {
+            this.setTableHeader();
             this.initData();
         },
         methods: {
+            setTableHeader() {
+                this.tableHeader = [
+                    {
+                        label: '活动编号',
+                        prop: 'activityNo',
+                        width: '300'
+                    }, {
+                        label: '中文名称',
+                        prop: 'activityNmZh',
+                        width: '400'
+                    }, {
+                        label: '英文名称',
+                        prop: 'activityNmEn',
+                        width: '600'
+                    }, {
+                        label: '活动类型',
+                        prop: 'activityTpStr',
+                    }, {
+                        label: '报名截止时间',
+                        prop: 'submitEndTs',
+                        width: '300'
+                    }, {
+                        label: '报名人要求（中文）',
+                        prop: 'attenderGradleZh',
+                        width: '300'
+                    }, {
+                        label: '报名人要求（英文）',
+                        prop: 'attenderGradleEn',
+                        width: '400'
+                    }, {
+                        label: '竞赛主题（中文）',
+                        prop: 'activityThemeZh',
+                        width: '400'
+                    }, {
+                        label: '竞赛主题（中文）',
+                        prop: 'activityThemeEn',
+                        width: '600'
+                    }, {
+                        label: '竞赛奖励（中文）',
+                        prop: 'prizeZh',
+                        width: '400'
+                    }, {
+                        label: '竞赛奖励（英文）',
+                        prop: 'prizeEn',
+                        width: '600'
+                    }, {
+                        label: '操作',
+                        prop: '',
+                        width: '300',
+                        slot: true,
+                        slotArr: [
+                            {
+                                type: 'btn',
+                                btnText: '活动描述',
+                                action: 'detail'
+                            }, {
+                                type: 'btn',
+                                btnText: '修改',
+                                action: 'edit'
+                            }, {
+                                type: 'btn',
+                                btnText: '删除',
+                                btnType: 'danger',
+                                action: 'del'
+                            }
+                        ]
+                    }
+                ];
+            },
             initData() {
                 Request({
                     url: 'activity/query',
@@ -273,7 +209,6 @@
                         activityTp: null,
                     }
                 }).then(res => {
-                    console.log('activity:', res);
                     let activityList = res.activities ? res.activities : [];
                     let competitionList = res.competitions ? res.competitions : [];
                     let pastList = res.hisActivitys ? res.hisActivitys : [];
@@ -294,35 +229,37 @@
                     }
                 });
             },
-            edit(record) {
-                this.editRow = record;
+            edit(row) {
+                this.form = {
+                    activityNo: row.activityNo,
+                    activityNmZh: row.activityNmZh,
+                    activityNmEn: row.activityNmEn,
+                    submitEndTs: row.submitEndTs,
+                    activityTp: row.activityTp,
+                    activityThemeZh: row.activityThemeZh,
+                    activityThemeEn: row.activityThemeEn,
+                    prizeZh: row.prizeZh,
+                    prizeEn: row.prizeEn,
+                    attenderGradleZh: row.attenderGradleZh,
+                    attenderGradleEn: row.attenderGradleEn,
+                    activityLogo: row.activityLogo
+                }
                 this.addVisible = true;
-                this.activityTp = record.activityTp;
+                this.activityTp = row.activityTp;
             },
             del(record) {
-                let _this = this;
-                Modal.confirm({
-                    title: '确认删除?',
-                    content: '删除后数据不可恢复!',
-                    cancelText: '取消',
-                    okText: '确认',
-                    onOk() {
-                        return new Promise((resolve, reject) => {
-                            Request({
-                                url: 'activity/delete',
-                                params: {
-                                    activityNo: record.activityNo
-                                }
-                            }).then(res => {
-                                if (res.code == 200) {
-                                    _this.$message.success('删除成功!');
-                                    _this.initData();
-                                }
-                                resolve();
-                            })
-                        }).catch(() => console.log('Oops errors!'));
-                    },
-                    onCancel() {},
+                warn('确认删除，删除后数据不可恢复？', () => {
+                    Request({
+                        url: 'activity/delete',
+                        params: {
+                            activityNo: record.activityNo
+                        }
+                    }).then(res => {
+                        if (res.code == 200) {
+                            success('删除成功!');
+                            this.initData();
+                        }
+                    })
                 });
             },
             showAddModal() {
@@ -333,28 +270,39 @@
             },
             handleCancel() {
                 this.addVisible = false;
-                this.editRow = {};
-                this.form.resetFields();
-                this.file = null;
+                this.form = {
+                    activityNmZh: '',
+                    activityNmEn: '',
+                    submitEndTs: '',
+                    activityTp: '',
+                    activityThemeZh: '',
+                    activityThemeEn: '',
+                    prizeZh: '',
+                    prizeEn: '',
+                    attenderGradleZh: '',
+                    attenderGradleEn: '',
+                }
+                this.file = null;                
+                this.$refs.file.value = '';
             },
             handleSubmit(e) {
                 e.preventDefault();
                 let file = this.file;
                 if (file && file.size > 1024 * 1024) {
-                    this.$message.error('图片过大，请选择小于1M的图片!');
+                    error('图片过大，请选择小于1M的图片!');
                     return;
                 }
-                this.form.validateFields((err, values) => {
-                    if (!err) {
-                        let params = this.getFormParams(values);
+                this.$refs.form.validate(valid => {
+                    if (valid) {
+                        let form = this.form;
+                        let params = this.getFormParams(form);
                         if (this.file) {
                             params.append('file', file);
                         }
                         let url = 'activity/add';
                         let msg = '新增成功!';
-                        if (this.editRow.activityNo) {
+                        if (form.activityNo) {
                             url = 'activity/update';
-                            params.append('activityNo', this.editRow.activityNo);
                             msg = '修改成功!';
                         }
                         Request({
@@ -363,7 +311,7 @@
                             params: params,
                         }).then(res => {
                             if (res.code == 200) {
-                                this.$message.success(msg);
+                                success(msg);
                                 this.initData();
                                 this.handleCancel();
                             }
@@ -388,11 +336,11 @@
 
         },
         components: {
-            Menu,
+            Table,
         }
     }
 </script>
-<style lang="less">
+<style lang="less" scoped>
     .curd {
         .ant-upload-list {
             display: none !important;
@@ -406,8 +354,8 @@
         }
         .file_btn {
             float: left;
-            width: 80px;
-            height: 30px;
+            width: auto;
+            height: auto;
         }
     }
     .pic {

@@ -1,15 +1,16 @@
 <template>
     <div class="curd_menu">
-        <a-menu
-            mode="inline"
-            @select="handelMenuChange"
-            >
-            <a-menu-item v-for="(menu, menuIdx) in menuList" 
-                :key="menu.key"
-                :class="{'ant-menu-item-selected': $route.path == menu.path}" >
-                <span>{{menu.title}}</span>
-            </a-menu-item>
-        </a-menu>
+        <el-menu
+            class="el-menu-vertical-demo"
+            background-color="#545c64"
+            text-color="#fff"
+            active-text-color="#ffd04b"
+            :default-active="$route.path"
+            @select="handleSelect">
+            <el-menu-item  v-for="(menu) in menuList" :key="menu.key" :index="menu.path">
+                <span slot="title">{{menu.title}}</span>
+            </el-menu-item>
+        </el-menu>
     </div>
 </template>
 <script>
@@ -26,6 +27,10 @@
             setMenuList() {
                 this.menuList = [
                     {
+                        title: '首页',
+                        key: 'home',
+                        path: '/curd/',
+                    }, {
                         title: '新闻',
                         key: 'news',
                         path: '/curd/news',
@@ -56,18 +61,16 @@
                     }
                 ]
             }, 
-            handelMenuChange(menu) {
+            handleSelect(menu) {
                 let route = this.$route;
-                let path = `/curd/${menu.key}`;
-                this.current = [menu.key];
-                if (path == route.path) {
+                if (menu == route.path) {
                     return;
                 }
                 this.$router.push({
-                    path: path,
+                    path: menu,
                 });
-            }
-        }
+            },
+        },
     }
 </script>
 <style lang="less" scoped>

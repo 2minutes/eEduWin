@@ -1,164 +1,92 @@
 <template>
     <div class="curd clearfix">
-        <Menu />
         <div class="curd_right">
-            <a-button type="primary" @click="showAddModal">
+            <el-button type="primary" @click="showAddModal" size="small">
                 新增描述
-            </a-button>
-            <a-table :columns="tableHeader" :data-source="descList">
-                <a slot="name" slot-scope="text">{{ text }}</a>
-                <span slot="customTitle">Name</span>
-                <span slot="tags" slot-scope="record">
-                    <a-tag color="green" @click="edit(record)">修改</a-tag>
-                    <a-tag color="red" @click="del(record)">删除</a-tag>
-                </span>
-            </a-table>
+            </el-button>
+            <Table v-show="descList.length" :showSelect="false"
+                :tableHeader="tableHeader" :tableData="descList" 
+                :total="1" :page="1" :pageSize="10"/>
         </div>
         <!-- 新增课程介绍 -->
-        <a-modal
-            :title="(editRow.id ? '修改' : '新增') + '课程介绍'"
-            :visible="detailVisible"
-            @cancel="closeDetail"
-            :footer="null"
-            :width="800"
-            >
-            <a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" @submit="handleSubmit">
-                <a-form-item label="描述类型">
-                    <a-select @change="handleTypeChange"
-                        v-decorator="[
-                            'showRank',
-                            { 
-                                rules: [{ required: true, message: '请选择描述类型' }],
-                                initialValue: editRow.showRank 
-                            },
-                        ]"
-                        >
-                        <a-select-option value="1">
-                            课程描述
-                        </a-select-option>
-                        <a-select-option value="2">
-                            课程要求
-                        </a-select-option>
-                        <a-select-option value="3">
-                            教师背景
-                        </a-select-option>
-                        <a-select-option value="4">
-                            课程目标
-                        </a-select-option>
-                        <a-select-option value="5">
-                            课程亮点
-                        </a-select-option>
-                    </a-select>
-                </a-form-item>
-                <a-form-item label="描述标题（中）">
-                    <a-input
-                        :disabled="true" 
-                        v-decorator="[
-                            'descTitleCn',
-                            { 
-                                rules: [{ required: true, message: '请输入描述标题（中）' }],
-                                initialValue: editRow.descTitleCn 
-                            },
-                        ]"/>
-                </a-form-item>
-                <a-form-item label="描述标题（英）">
-                    <a-input
-                        :disabled="true" 
-                        v-decorator="[
-                            'descTitleEn',
-                            { 
-                                rules: [{ required: true, message: '请输入描述标题（英）' }],
-                                initialValue: editRow.descTitleEn 
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="描述（中）">
-                    <a-textarea 
-                        v-decorator="[
-                            'courseDescCn',
-                            { 
-                                rules: [{ required: true, message: '请输入描述（中）' }],
-                                initialValue: editRow.courseDescCn 
-                            },
-                        ]"
-                        placeholder="#号分隔"
-                        :autoSize="{minRows:2, maxRows: 6}"
-                        :allowClear="true" />
-                </a-form-item>
-                <a-form-item label="描述（英）">
-                    <a-textarea 
-                        v-decorator="[
-                            'courseDescEn',
-                            { 
-                                rules: [{ required: true, message: '请输入描述（英）' }],
-                                initialValue: editRow.courseDescEn 
-                            },
-                        ]"
-                        placeholder="#号分隔" 
-                        :autoSize="{minRows:2, maxRows: 6}"
-                        :allowClear="true"/>
-                </a-form-item>
-                <!-- <a-form-item label="显示排序">
-                    <a-input v-model="detail.showRank" />
-                </a-form-item> -->
-                <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
-                    <a-button type="primary" html-type="submit">
-                        {{editRow.id ? '修改' : '新增'}}
-                    </a-button>
-                </a-form-item>
-            </a-form>
-        </a-modal> 
+        <el-dialog
+            :title="(form.id ? '修改' : '新增') + '课程介绍'"
+            :visible.sync="addVisible"
+            width="820px"
+            :before-close="handleCancel">
+            <el-form :model="form" :rules="rules" ref="form" label-width="140px">
+                <el-form-item v-if="courseType !== 'Talk'" label="描述类型" prop="showRank">
+                    <el-select v-model="form.showRank" placeholder="请选择" @change="handleTypeChange">
+                        <el-option
+                            v-for="item in descTypeList"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="描述标题（中）" prop="descTitleCn">
+                    <el-input v-model="form.descTitleCn" autocomplete="off" :disabled="courseType !== 'Talk'" ></el-input>
+                </el-form-item>
+                <el-form-item label="描述标题（英）" prop="descTitleEn">
+                    <el-input v-model="form.descTitleEn" autocomplete="off" :disabled="courseType !== 'Talk'" ></el-input>
+                </el-form-item>
+                <el-form-item label="描述（中）" prop="courseDescCn">
+                    <el-input v-model="form.courseDescCn" placeholder="#号分隔" type="textarea" :autosize="{minRows: 2}"></el-input>
+                </el-form-item>
+                <el-form-item label="描述（英）" prop="courseDescEn">
+                    <el-input v-model="form.courseDescEn" placeholder="#号分隔" type="textarea" :autosize="{minRows: 2}"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="handleCancel">关 闭</el-button>
+                <el-button type="primary" @click="handleSubmit">{{form.id ? '修改' : '新增'}}</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 <script>
-    import {Request, Post} from '@/api/request';
-    import axios from 'axios';
-    import baseUrl from '@/utils/baseUrl';
-    import Menu from '@/components/common/menu';
-    import {Modal} from 'ant-design-vue';
-    const columns = [
-        {
-            title: '描述标题（中）',
-            dataIndex: 'descTitleCn',
-            key: 'descTitleCn',
-        }, {
-            title: '描述标题（英）',
-            dataIndex: 'descTitleEn',
-            key: 'descTitleEn',
-        }, {
-            title: '描述（中）',
-            key: 'courseDescCn',
-            dataIndex: 'courseDescCn',
-        }, {
-            title: '描述（英）',
-            key: 'courseDescEn',
-            dataIndex: 'courseDescEn',
-        }, {
-            title: '操作',
-            key: 'action',
-            scopedSlots: { customRender: 'tags' }
-        }
-    ];
+    import {Request} from '@/api/request';
+    import Table from '@/components/common/table';
+    import {success, error, warn, getCourseTypeShort} from '@/assets/js/public';
+    
     export default {
         data() {
             return {
-                formLayout: 'horizontal',
-                form: this.$form.createForm(this, { name: 'course' }),
-                headers: {
-                    authorization: 'authorization-text',
+                form: {
+                    showRank: '',
+                    descTitleCn: '',
+                    descTitleEn: '',
+                    courseDescCn: '',
+                    courseDescEn: '',
                 },
+                rules: {
+                    showRank: {required: true, message: '请选择描述类型', trigger: 'blur'},
+                    descTitleCn: {required: true, message: '请输入描述标题（中）', trigger: 'blur'},
+                    descTitleEn: {required: true, message: '请输入描述标题（英）', trigger: 'blur'},
+                    courseDescCn: {required: true, message: '请输入描述（中）', trigger: 'blur'},
+                    courseDescEn: {required: true, message: '请输入描述（英）', trigger: 'blur'},
+                },
+                descTypeList: [
+                    {label: '课程描述', value: '1',},
+                    {label: '课程要求', value: '2',},
+                    {label: '教师背景', value: '3',},
+                    {label: '课程目标', value: '4',},
+                    {label: '课程亮点', value: '5',},
+                ],
+                maxRank: '',
 
+                tableHeader: [],
                 detail: [],
                 descList: [],
                 courseNo: '',
-                detailVisible: false,
 
-                editRow: {},
-                tableHeader: columns,
+                addVisible: false,
+                courseType: '',
             };
         },
         created() {
+            this.setTableHeader();
             let query = this.$route.query;
             if (query.cno) {
                 this.courseNo = query.cno;
@@ -166,6 +94,44 @@
             }
         },
         methods: {
+            setTableHeader() {
+                this.tableHeader = [
+                    {
+                        label: '描述标题（中）',
+                        prop: 'descTitleCn',
+                        width: '300'
+                    }, {
+                        label: '描述标题（英）',
+                        prop: 'descTitleEn',
+                        width: '300'
+                    }, {
+                        label: '描述（中）',
+                        prop: 'courseDescCn',
+                        width: '600'
+                    }, {
+                        label: '描述（英）',
+                        prop: 'courseDescEn',
+                        width: '600'
+                    }, {
+                        label: '操作',
+                        prop: '',
+                        width: '200',
+                        slot: true,
+                        slotArr: [
+                            {
+                                type: 'btn',
+                                btnText: '修改',
+                                action: 'edit'
+                            }, {
+                                type: 'btn',
+                                btnText: '删除',
+                                action: 'del',
+                                btnType: 'danger'
+                            }
+                        ]
+                    }
+                ];
+            },
             initData() {
                 Request({
                     url: 'course/query',
@@ -175,62 +141,66 @@
                 }).then(res => {
                     let detail = res.courses.length ? res.courses[0] : [];
                     let descList = detail.courseDesc ? detail.courseDesc : [];
-                    descList = descList.map(item => {
-                        item.key = item.showRank;
-                        return item;
-                    });
                     this.descList = descList;
                     this.detail = detail;
+                    let type = detail.courseType ? getCourseTypeShort(detail.courseType.typeNmEn) : '';
+                    this.courseType = type;
+                    if (type === 'Talk') {
+                        this.setMaxRank(descList);
+                    }
                 });
             },
-            edit(record) {
-                this.editRow = record;
-                this.detailVisible = true;
+            edit(row) {
+                this.form = {
+                    id: row.id,
+                    showRank: row.showRank,
+                    descTitleCn: row.descTitleCn,
+                    descTitleEn: row.descTitleEn,
+                    courseDescCn: row.courseDescCn,
+                    courseDescEn: row.courseDescEn,
+                };
+                this.showAddModal();
             },
             del(record) {
-                let _this = this;
-                Modal.confirm({
-                    title: '确认删除?',
-                    content: '删除后数据不可恢复!',
-                    cancelText: '取消',
-                    okText: '确认',
-                    onOk() {
-                        return new Promise((resolve, reject) => {
-                            Request({
-                                url: 'course/deleteDesc',
-                                params: {
-                                    id: record.id
-                                }
-                            }).then(res => {
-                                if (res.code == 200) {
-                                    _this.$message.success('删除成功!');
-                                    _this.initData();
-                                }
-                                resolve();
-                            })
-                        }).catch(() => console.log('Oops errors!'));
-                    },
-                    onCancel() {},
+                warn('确认删除，删除后数据不可恢复？', () => {
+                    Request({
+                        url: 'course/deleteDesc',
+                        params: {
+                            id: record.id
+                        }
+                    }).then(res => {
+                        if (res.code == 200) {
+                            success('删除成功!');
+                            this.initData();
+                        }
+                    })
                 });
             },
             showAddModal() {
-                this.detailVisible = true;
+                this.addVisible = true;
             },
-            closeDetail() {
-                this.detailVisible = false;
-                this.editRow = {};
-                this.form.resetFields();
+            handleCancel() {
+                this.addVisible = false;
+                this.form = {
+                    showRank: '',
+                    descTitleCn: '',
+                    descTitleEn: '',
+                    courseDescCn: '',
+                    courseDescEn: '',
+                };
             },
             handleSubmit(e) {
                 e.preventDefault();
-                this.form.validateFields((err, values) => {
-                    if (!err) {
-                        let params = values;
+                this.$refs.form.validate(valid => {
+                    if (valid) {
+                        let params = this.form;
+                        if (this.courseType === 'Talk') {
+                            params.showRank = this.maxRank;
+                        }
                         params.courseNo = this.courseNo;
                         let url = 'course/addCourseDesc';
                         let desc = '新增成功!';
-                        if (this.editRow.id) {
-                            params.id = this.editRow.id;
+                        if (params.id) {
                             url = 'course/updateCourseDesc';
                             desc = '修改成功!';
                         }
@@ -239,13 +209,11 @@
                             params: params,
                         }).then(res => {
                             if (res.code == 200) {
-                                this.$message.success(desc);
-                                this.detailVisible = false;
-                                this.form.resetFields();
-                                this.editRow = {};
+                                success(desc);
+                                this.handleCancel();
                                 this.initData();
                             } else {
-                                this.$message.error(res.desc);
+                                error(res.desc);
                             }
                         })
                     }
@@ -277,18 +245,25 @@
                         descTitleEn = 'Course Highlights'; 
                         break;
                 }
-                this.form.setFieldsValue({
-                    descTitleCn: descTitleCn,
-                    descTitleEn: descTitleEn
+                this.form.descTitleCn = descTitleCn;
+                this.form.descTitleEn = descTitleEn;
+            },
+            setMaxRank(list) {
+                let rank = '6';
+                list.forEach(item => {
+                    if (item.showRank > rank) {
+                        rank = item.showRank;
+                    }
                 });
+                this.maxRank = rank - 0 + 1 + '';
             }
         },
         components: {
-            Menu,
-        }
+            Table
+        },
     }
 </script>
-<style lang="less">
+<style lang="less" scoped>
     .news {
         .ant-upload-list {
             display: none !important;

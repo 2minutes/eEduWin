@@ -2,10 +2,15 @@
     <div class="app_container clearfix" ref="head">
         <div class="services_header">
             <CommonHeader />
-            <p class="services_title">{{$t('services.admissionServices')}}</p>
+            <p class="services_title">
+                {{$t('services.admissionServices')}}
+                <a ref="down_a" class="down_a" :href="downloadUrl" 
+                    download="创赢-规划服务手册.pdf"></a>
+                <span class="down_btn" @click="download">{{$t('services.down')}}</span>
+            </p>
             <p class="services_overview_title">{{$t('services.overview')}}:</p>
             <p>{{$t('services.overviewDesc')}}</p>
-            <span>{{$t('services.fullServicesDesc')}}</span>
+            <span class="tip">{{$t('services.fullServicesDesc')}}</span>
         </div>
 
         <div class="goals_wrap">
@@ -49,19 +54,35 @@
 <script>
     import CommonHeader from '@/components/common/commonHeader';
     import CommonFooter from '@/components/common/commonFooter';
+    import {error} from '@/assets/js/public';
+    import {mapGetters} from 'vuex';
     export default {
         data() {
             return {
                 activeTabIdx: 0,
                 tabImgs: ['advise', 'guidance', 'enhance', 'support', 'communicate'],
+                downloadUrl: '../../static/files/ServicePackage.pdf',
             }
+        },
+        created() {
+            this.$root.addTj(6);
         },
         methods: {
             selectTab(idx) {
                 this.activeTabIdx = idx;
             },
+            download() {
+                if (this.userName) {
+                    this.$refs.down_a.click();
+                } else {
+                    error('请先登录!');
+                    this.$store.dispatch('handleLoginModel', true);
+                    this.$root.addTj(9);
+                }
+            },
         },
         computed: {
+            ...mapGetters(['userName']),
             tabList() {
                 return [
                     this.$t('services.advise'),
@@ -105,7 +126,10 @@
                     ]
                 ];
                 return contList;
-            }
+            },
+            // downloadUrl() {
+            //     return `../../static/files/ServicePackage.pdf`;
+            // },
         },
         components: {
             CommonHeader, CommonFooter,
@@ -133,6 +157,19 @@
             line-height: 70px;
             font-size: 30px;
             font-weight: bold;
+            .down_btn {
+                padding: 0 20px;
+                display: inline-block;
+                height: 40px;
+                line-height: 40px;
+                font-size: 20px;
+                background-color: #f8f8a0;
+                cursor: pointer;
+                border-radius: 20px;
+            }
+            .down_a {
+                visibility: hidden;
+            }
         }
         .services_overview_title {
             height: 56px;
@@ -140,7 +177,7 @@
             font-weight: bold;
             font-size: 16px;
         }
-        span {
+        .tip {
             padding: 40px 190px;
             box-sizing: border-box;
             position: absolute;

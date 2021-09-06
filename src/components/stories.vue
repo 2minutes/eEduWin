@@ -5,8 +5,7 @@
             <div class="stories_top_wrap clearfix">
                 <div class="our_stories clearfix">
                     <p class="stories_title">{{$t('stories.ourStories')}}</p>
-                    <p class="stories_desc">{{$t('stories.ourStoriesDesc1')}}<p>
-                    <p class="stories_desc">{{$t('stories.ourStoriesDesc2')}}</p>
+                    <p class="stories_desc">{{$t('stories.ourStoriesDesc1')}}</p>
                 </div>
                 <div class="stories_btns">
                     <span class="stories_btn" @click="toPosition('cases')">{{$t('stories.topOffersCaps')}}<i></i></span>
@@ -50,6 +49,7 @@
             }
         },
         created() {
+            this.$root.addTj(3);
         },
         methods: {
             toPosition(idName) {//滚动到指定位置
@@ -112,6 +112,22 @@
                             this.$t('stories.columbiaEconomicsAchievements'),
                         ],
                         icon: 'icon_columbia',
+                    }, {
+                        name: this.$t('stories.MITComputerScience'),
+                        list: [
+                            this.$t('stories.MITComputerScienceAcademic'),
+                            this.$t('stories.MITComputerScienceActivities'),
+                            this.$t('stories.MITComputerScienceAchievements'),
+                        ],
+                        icon: 'icon_mit',
+                    }, {
+                        name: this.$t('stories.California'),
+                        list: [
+                            this.$t('stories.CaliforniaAcademic'),
+                            this.$t('stories.CaliforniaActivities'),
+                            this.$t('stories.CaliforniaAchievements'),
+                        ],
+                        icon: 'icon_california',
                     }, {
                         name: this.$t('stories.andMore'),
                         list: [],

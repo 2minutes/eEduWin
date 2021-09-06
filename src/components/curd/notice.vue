@@ -1,159 +1,94 @@
 <template>
     <div class="curd clearfix">
-        <Menu />
         <div class="curd_right">
-            <a-button type="primary" @click="showAddModal">
+            <el-button type="primary" @click="showAddModal" size="small">
                 新增
-            </a-button>
-            <a-table :columns="tableHeader" :data-source="noticeList">
-                <a slot="name" slot-scope="text">{{ text }}</a>
-                <span slot="customTitle">Name</span>
-                <span slot="tags" slot-scope="record">
-                    <a-tag color="green" @click="edit(record)">修改</a-tag>
-                    <a-tag color="red" @click="del(record)">删除</a-tag>
-                </span>
-            </a-table>
+            </el-button>
+            <Table v-show="noticeList.length" :showSelect="false"
+                :tableHeader="tableHeader" :tableData="noticeList" 
+                :total="1" :page="1" :pageSize="10"/>
         </div>
-        <a-modal
-            :title="(editRow.newsNo ? '修改' : '新增') + '通告'"
-            :visible="addVisible"
-            @ok="handleOk"
-            @cancel="handleCancel"
-            :footer="null"
-            :width="800"
-            >
-            <a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" @submit="handleSubmit">
-                <a-form-item label="通告标题（中文）">
-                    <a-input
-                        v-decorator="[
-                            'noticeTitleZh',
-                            { 
-                                rules: [{ required: true, message: '请输入中文标题' }],
-                                initialValue: editRow.noticeTitleZh 
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="通告标题（英文）">
-                    <a-input
-                        v-decorator="[
-                            'noticeTitleEn',
-                            { 
-                                rules: [{ required: true, message: '请输入英文标题' }],
-                                initialValue: editRow.noticeTitleEn 
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="报名截止时间">
-                    <a-date-picker
-                        placeholder="报名截止时间"
-                        show-time
-                        :allowClear="true"
-                        :format="'yyyy-MM-DD HH:mm:ss'"
-                        :valueFormat="'yyyy-MM-DD HH:mm:ss'"
-                        v-decorator="[
-                            'endTs',
-                            { 
-                                rules: [{ required: true, message: '请选择报名截止时间' }],
-                                initialValue: editRow.endTs
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="通告内容（中文）">
-                    <a-textarea  :autoSize="true"
-                        :allowClear="true"
-                        placeholder="多段数据用#分隔"
-                        v-decorator="[
-                            'noticeContentZh',
-                            { 
-                                rules: [{ required: true, message: '请输入中文通告内容' }],
-                                initialValue: editRow.noticeContentZh
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="通告内容（英文）">
-                    <a-textarea :autoSize="{minRows:2, maxRows: 6}"
-                        :allowClear="true"
-                        placeholder="多段数据用#分隔"
-                        v-decorator="[
-                            'noticeContentEn',
-                            { 
-                                rules: [{ required: true, message: '请输入英文通告内容' }],
-                                initialValue: editRow.noticeContentEn
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="通告图片">
-                    <img class="news_pic" v-if="editRow.noticePic" :src="editRow.noticePic" @click="handlePreview(editRow.noticePic)" />
-                    <input class="file_btn" name="file" type="file" 
+        <!-- 新增通告 -->
+        <el-dialog
+            :title="(form.id ? '修改' : '新增') + '通告'"
+            :visible.sync="addVisible"
+            width="820px"
+            :before-close="handleCancel">
+            <el-form :model="form" :rules="rules" ref="form" label-width="160px">
+                
+                <el-form-item label="通告标题（中文）" prop="noticeTitleZh">
+                    <el-input v-model="form.noticeTitleZh" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="通告标题(英文)" prop="noticeTitleEn">
+                    <el-input v-model="form.noticeTitleEn" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="报名截止时间" prop="endTs">
+                    <el-date-picker
+                        v-model="form.endTs"
+                        type="datetime"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        placeholder="报名截止时间">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="通告内容（中文）" prop="noticeContentZh">
+                    <el-input v-model="form.noticeContentZh" type="textarea" :autoSize="{minRows: 2}"
+                        placeholder="多段数据用#分隔"></el-input>
+                </el-form-item>
+                <el-form-item label="通告内容（英文）" prop="noticeContentEn">
+                    <el-input v-model="form.noticeContentEn" type="textarea" :autoSize="{minRows: 2}"
+                        placeholder="多段数据用#分隔"></el-input>
+                </el-form-item>
+                <el-form-item label="通告图片">
+                    <el-image  v-if="form.noticePic" class="pic"
+                        :src="form.noticePic" @click="handlePreview(form.noticePic)" >
+                    </el-image>
+                    <input class="file_btn" name="file" type="file" ref="file"
                         accept="image/png,image/gif,image/jpeg" 
                         @change="handleChange"/>
-                </a-form-item>
-                <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
-                    <a-button type="primary" html-type="submit">
-                        {{editRow.id ? '修改' : '新增'}}
-                    </a-button>
-                </a-form-item>
-            </a-form>
-        </a-modal> 
-
-        <a-modal :visible="previewVisible" :footer="null" 
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="handleCancel">关 闭</el-button>
+                <el-button type="primary" @click="handleSubmit">{{form.id ? '修改' : '新增'}}</el-button>
+            </div>
+        </el-dialog>
+        <!-- 图片预览 -->
+        <el-dialog :visible.sync="previewVisible" :footer="null" 
             @cancel="handlePreview()">
             <img alt="example" style="width: 100%" :src="previewImgUrl" />
-        </a-modal>
+        </el-dialog>
+
     </div>
 </template>
 <script>
     import {Request} from '@/api/request';
-    import axios from 'axios';
-    import Menu from '@/components/common/menu';
-    import {Modal} from 'ant-design-vue';
-    import {getFormParams} from '@/assets/js/public';
-    const columns = [
-        {
-            title: '通知编号',
-            dataIndex: 'id',
-            key: 'id',
-        }, {
-            title: '中文标题',
-            dataIndex: 'noticeTitleZh',
-            key: 'noticeTitleZh',
-        }, {
-            title: '英文标题',
-            dataIndex: 'noticeTitleEn',
-            key: 'noticeTitleEn',
-        }, {
-            title: '中文内容',
-            key: 'noticeContentZh',
-            dataIndex: 'noticeContentZh',
-        }, {
-            title: '英文内容',
-            key: 'noticeContentEn',
-            dataIndex: 'noticeContentEn',
-        }, {
-            title: '截止时间',
-            key: 'endTs',
-            dataIndex: 'endTs',
-        }, {
-            title: '操作',
-            key: 'action',
-            scopedSlots: { customRender: 'tags' }
-        }
-    ];
+    import {getFormParams, warn, success} from '@/assets/js/public';
+    import Table from '@/components/common/table';
+    
     export default {
         data() {
             return {
-                formLayout: 'horizontal',
-                form: this.$form.createForm(this, { name: 'notice' }),
+                form: {
+                    noticeTitleZh: '',
+                    noticeTitleEn: '',
+                    endTs: '',
+                    noticeContentZh: '',
+                    noticeContentEn: '',
+                },
+                rules: {
+                    noticeTitleZh: {required: true, message: '请输入中文标题', trigger: 'blur'},
+                    noticeTitleEn: {required: true, message: '请输入英文标题', trigger: 'blur'},
+                    endTs: {required: true, message: '请选择报名截止时间', trigger: 'blur'},
+                    noticeContentZh: {required: true, message: '请输入中文通告内容', trigger: 'blur'},
+                    noticeContentEn: {required: true, message: '请输入英文通告内容', trigger: 'blur'},
+                },
                 file: null,
 
                 noticeList: [],
-                editRow: {},
-                tableHeader: columns,
+                tableHeader: [],
 
                 addVisible: false,
                 previewVisible: false,
@@ -161,60 +96,104 @@
             };
         },
         created() {
+            this.setTableHeader();
             this.initData();
         },
         methods: {
+            setTableHeader() {
+                this.tableHeader = [
+                    {
+                        label: '通知编号',
+                        prop: 'id',
+                    }, {
+                        label: '中文标题',
+                        prop: 'noticeTitleZh',
+                        width: '300'
+                    }, {
+                        label: '英文标题',
+                        prop: 'noticeTitleEn',
+                        width: '600'
+                    }, {
+                        label: '中文内容',
+                        prop: 'noticeContentZh',
+                        width: '400'
+                    }, {
+                        label: '英文内容',
+                        prop: 'noticeContentEn',
+                        width: '600'
+                    }, {
+                        label: '截止时间',
+                        prop: 'endTs',
+                        width: '240'
+                    }, {
+                        label: '操作',
+                        prop: '',
+                        width: '200',
+                        slot: true,
+                        slotArr: [
+                            {
+                                type: 'btn',
+                                btnText: '修改',
+                                action: 'edit'
+                            }, {
+                                type: 'btn',
+                                btnText: '删除',
+                                btnType: 'danger',
+                                action: 'del'
+                            }
+                        ]
+                    }
+                ];
+            },
             initData() {
                 Request({
                     url: 'notice/query',
                 }).then(res => {
                     let list = res.notices ? res.notices : [];
-                    list = list.map(item => {
-                        item.key = item.id;
-                        return item;
-                    });
                     this.noticeList = list;
                 });
             },
-            edit(record) {
-                this.editRow = record;
-                this.addVisible = true;
+            edit(row) {
+                this.form = {
+                    id: row.id,
+                    noticeTitleZh: row.noticeTitleZh,
+                    noticeTitleEn: row.noticeTitleEn,
+                    endTs: row.endTs,
+                    noticeContentZh: row.noticeContentZh,
+                    noticeContentEn: row.noticeContentEn,
+                    noticePic: row.noticePic,
+                };
+                this.showAddModal();
             },
             del(record) {
-                let _this = this;
-                Modal.confirm({
-                    title: '确认删除?',
-                    content: '删除后数据不可恢复!',
-                    cancelText: '取消',
-                    okText: '确认',
-                    onOk() {
-                        return new Promise((resolve, reject) => {
-                            Request({
-                                url: 'notice/delete',
-                                params: {
-                                    id: record.id
-                                }
-                            }).then(res => {
-                                if (res.code == 200) {
-                                    _this.$message.success('删除成功!');
-                                    _this.initData();
-                                }
-                                resolve();
-                            })
-                        }).catch(() => console.log('Oops errors!'));
-                    },
-                    onCancel() {},
+                warn('确认删除，删除后数据不可恢复？', () => {
+                    Request({
+                        url: 'notice/delete',
+                        params: {
+                            id: record.id
+                        }
+                    }).then(res => {
+                        if (res.code == 200) {
+                            success('删除成功!');
+                            this.initData();
+                        }
+                    })
                 });
             },
             showAddModal() {
                 this.addVisible = true;
             },
-            handleOk() {},
             handleCancel() {
                 this.addVisible = false;
-                this.editRow = {};
-                this.form.resetFields();
+                this.form = {
+                    noticeTitleZh: '',
+                    noticeTitleEn: '',
+                    endTs: '',
+                    noticeContentZh: '',
+                    noticeContentEn: '',
+                };
                 this.file = null;
+                this.$refs.file.value = '';
             },
             handleSubmit(e) {//size
                 e.preventDefault();
@@ -223,17 +202,17 @@
                     this.$message.error('图片过大，请选择小于1M的图片!');
                     return;
                 }
-                this.form.validateFields((err, values) => {
-                    if (!err) {
-                        let formData = getFormParams(values);
+                this.$refs.form.validate(valid => {
+                    if (valid) {
+                        let form = this.form;
+                        let formData = getFormParams(form);
                         if (this.file) {
                             formData.append('file', file);
                         }
                         let url = 'notice/add';
                         let msg = '新增成功!';
-                        if (this.editRow.id) {
+                        if (form.id) {
                             url = 'notice/update';
-                            formData.append('id', this.editRow.id);
                             msg = '修改成功!';
                         }
                         Request({
@@ -242,9 +221,9 @@
                             params: formData,
                         }).then(res => {
                             if (res.code == 200) {
-                                this.$message.success(msg);
-                                this.initData();
+                                success(msg);
                                 this.handleCancel();
+                                this.initData();
                             }
                         })
                     }
@@ -254,26 +233,17 @@
             handleChange(e) {
                 this.file = e.target.files[0];
             },
-            beforeUpload(file) {
-                return false;
-                let reader = new FileReader();
-                reader.readAsText(file);
-                reader.onload = e => {
-                    let uids = e.target.result.split('\r\n');
-                    return false;
-                }
-            },
             handlePreview(imgUrl = '') {
                 this.previewImgUrl = imgUrl;
                 this.previewVisible = imgUrl ? true : false;
             },
         },
         components: {
-            Menu,
+            Table,
         }
     }
 </script>
-<style lang="less">
+<style lang="less" scoped>
     .news {
         .ant-upload-list {
             display: none !important;
@@ -291,7 +261,7 @@
             height: 30px;
         }
     }
-    .news_pic {
+    .pic {
         float: left;
         margin-right: 10px;
         width: 80px;

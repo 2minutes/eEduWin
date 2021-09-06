@@ -134,6 +134,8 @@ export default {
         capstoneCoursesDesc: '多方面运用综合理论及知识体系来解决现实世界潜在问题的开拓课程',
         enrichmentCourses: '飞跃课程',
         enrichmentCoursesDesc: '具有现任大学教授与行业专家带来独特专业视角的飞跃课程',
+        talkCourses: '"创赢说"讲座系列',
+        talkCoursesDesc: '用“创造、创新、创业”的视角，诉说世界和身边的故事，赋能青年的未来学习',
         seeCourses: '查看课程',
 
         math: '数学',
@@ -240,6 +242,7 @@ export default {
         overview: '服务介绍',
         overviewDesc: '我们汇聚了来自美国，加拿大，英国和中国的经验丰富的教育从业者和专业人士，热衷于为学生提供准确，严谨和一流的入学指导。我们将根据学生自己的优势，背景和兴趣来设计指导方案，旨在帮助学生获得全世界顶尖大学的录取通知。为每位申请人提供最合适的建议，计划和策略是我们引以为豪的宗旨，也是我们的首要任务。我们的目标是为年轻学生的生活带来创新和改变，以帮助他们实现梦想和潜力。',
         fullServicesDesc: '提供全方位大学申请，咨询，和规划服务的精品教育机构',
+        down: '一键下载规划服务手册',
 
         ourGoals: '我们的目标',
         goalsProvide: '在申请过程中为申请人提供高质量和可靠的指导和咨询',
@@ -297,8 +300,7 @@ export default {
     },
     stories: {
         ourStories: '我们的故事',
-        ourStoriesDesc1: '创赢的前身为EduInsiders北美优资，一家专注于留学申请服务的精品教育咨询公司。',
-        ourStoriesDesc2: '自2016年以来，北美优资以每年服务20位VIP学生为已任，根据他们的专长、背景及兴趣，帮助他们进入美国最富竞争力的大学。为每位申请人提供最适合的学校推荐、计划和学习策略，一直是我们首要任务，且我们以此为荣。',
+        ourStoriesDesc1: '在教育咨询领域的20年中，创赢一直以为每位申请人提供最适合的学校推荐、计划和学习策略为首要任务。根据学生的专长、背景及兴趣，最终帮助他们进入 全球最富竞争力的大学，一直是创赢的骄傲。创赢以每年服务不超过 20 位 VIP 学生为己任，旨在缔造完美案例，达成申请者的最佳期待。',
         topOffersCaps: '录取金榜',
         successfulCasesCaps: '成功案例',
         ourExpertise: '我们的专长',
@@ -336,7 +338,17 @@ export default {
         columbiaEconomicsAcademic: '8项AP课程；',
         columbiaEconomicsActivities: '校报联合编辑；美术俱乐部创办人和主席；',
         columbiaEconomicsAchievements: '国家杂志上发表历史研究论文；年度论文比赛第三名；加利福尼亚历史文化日第三名，洛杉矶排名第一；南加州戏剧协会年度比赛中获得技术剧场第一名；特殊的美术才能（国家邮票设计获奖选手，所画内容为国家当年发行的圣诞节邮票；洛杉矶服装设计比赛第一名）',
+        
+        MITComputerScience: '麻省理工学院，计算机专业',
+        MITComputerScienceAcademic: '不加权成绩4.0, 10 门AP 通过，两门大学课程；',
+        MITComputerScienceActivities: '计算机编程项目多次获奖，并参与就算及领域研究和发表论文，参与计算机领域的研究并发表论文，四年学校奥林匹克科学队；',
+        MITComputerScienceAchievements: '获地区和州级奖，AMC12 晋级AIME，6年击剑运动训练，参与多次国际国内比赛，取得佳绩，并在自己年龄组全美排名优异。',
 
+        California: '加州理工大学，化学系，并获4万美元奖学金',
+        CaliforniaAcademic: '不加权成绩4.0, 10 门AP 通过，ACT满分；',
+        CaliforniaActivities: '三年高中科研经验，参与由UCLA 和加州理工教授指导的科研，并发表论文，武术运动高手，并获世界武术竞标赛两项铜奖，8年好莱坞演艺训练，参与多次广告和电影拍摄；',
+        CaliforniaAchievements: '2019年出演主角的短片，在一世界电影展中获金奖。',
+        
         andMore: '还有更多',
     },
     verify: {

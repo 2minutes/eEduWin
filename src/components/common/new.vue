@@ -8,9 +8,14 @@
                     v-for="(list, listIdx) in newsContList"
                     :key="listIdx">{{list}}</p>
                 <p class="new_img clearfix">
-                    <img v-show="news.newsPic" :src="news.newsPic" />
-                    <span v-show="!news.newsPic" class="img_empty"></span>
-                    <!-- <span>Picture source/citation</span> -->
+                    <img v-if="news.contentPic && !playerOptions" :src="news.contentPic" />
+                    <video-player v-if="news.contentPic && playerOptions"  class="video-player-box"
+                        ref="videoPlayer"
+                        :options="playerOptions"
+                        :playsinline="true"
+                        customEventName="customstatechangedeventname"
+                        >
+                    </video-player>
                 </p>
             </div>
             <div class="new_btns">
@@ -23,6 +28,7 @@
 </template>
 <script>
     import {mapGetters} from 'vuex';
+    import {videoPlayer} from 'vue-video-player';
     export default {
         props: {
             list: {
@@ -79,7 +85,35 @@
             },
             zh() {
                 return this.$i18n.locale == 'zh';
+            },
+            videoFlag() {
+                
+            },
+            playerOptions() {
+                if (!this.news || !this.news.contentPic) {
+                    return null;
+                }
+                let contentPic = this.news.contentPic;
+                let split = contentPic.split('.');
+                let after = split[split.length - 1];
+                return ['webm', 'ogg', '3gp', 'mp4'].indexOf(after) != -1 
+                    ? {
+                        muted: true,
+                        language: 'en',
+                        playbackRates: [0.7, 1.0, 1.5, 2.0],
+                        sources: [{
+                            type: `video/${after}`,
+                            src: contentPic,
+                        }],
+                        width: '570px',
+                        height: '360px',
+                        poster: "",
+                        notSupportedMessage: this.$i18n.locale == 'zh' ? '此视频暂无法播放，请稍后再试' : "This video can't play right now. Please try again later",
+                    } : null;
             }
+        },
+        components: {
+            videoPlayer
         }
     }
 </script>
@@ -126,9 +160,10 @@
                 margin-top: 15px;
                 width: 100%;
                 img {
+                    display: block;
+                    margin: auto;
                     height: 270px;
-                    width: 410px;
-                    max-width: 520px;
+                    max-width: 100%;
                 }
                 .img_empty {
                     display: block;
@@ -138,6 +173,7 @@
                     background-size: 410px 270px;
                 }
                 span {
+                    margin: auto;
                     display: block;
                     width: 100%;
                     height: 16px;

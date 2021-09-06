@@ -1,7 +1,7 @@
 <template>
     <div class="app_container clearfix" ref="head">
         <CommonHeader :blue="true"/>
-        <div class="edu_club">
+        <div class="edu_club app_content">
             <img class="edu_club_yellow" src="../assets/images/home_yellow.png">
             <img class="edu_club_blue" src="../assets/images/home_blue.png">
             <div class="text_field">
@@ -17,6 +17,9 @@
     import CommonFooter from '@/components/common/commonFooter';
     export default {
         name: "club",
+        created() {
+            this.$root.addTj(7);
+        },
         components: {
           CommonHeader, CommonFooter,
         }

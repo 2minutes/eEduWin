@@ -2,8 +2,7 @@ import axios from 'axios';
 import QS from 'qs';
 
 import baseUrl from '@/utils/baseUrl';
-import {getToken, loginClear, loading, hideLoading,} from '@/assets/js/public';
-import {message} from 'ant-design-vue';
+import {getToken, loginClear, loading, hideLoading, error} from '@/assets/js/public';
 import store from '@/store/index';
 
 const service = axios.create({
@@ -58,7 +57,7 @@ service.post = function post(url, params) {
 service.interceptors.response.use(response => {
     const res = response.data;
     if(res.code != 200) {
-        message.error(res.msg);
+        error(res.msg);
         if (res.code == '1001') {
             loginClear();
         }

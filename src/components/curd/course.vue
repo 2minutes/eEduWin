@@ -1,326 +1,154 @@
 <template>
     <div class="curd clearfix">
-        <Menu />
         <div class="curd_right">
-            <a-button type="primary" @click="showAddModal">
+            <el-button type="primary" @click="showAddModal" size="small">
                 新增
-            </a-button>
-            <a-table :columns="tableHeader" :data-source="courseList"
-                >
-                <a slot="name" slot-scope="text">{{ text }}</a>
-                <span slot="customTitle">Name</span>
-                <span slot="tags" slot-scope="record">
-                    <a-tag color="red" @click="detail(record)">课程描述</a-tag>
-                    <a-tag color="green" @click="edit(record)">修改</a-tag>
-                    <a-tag color="red" @click="del(record)">删除</a-tag>
-                </span>
-            </a-table>
+            </el-button>
+            <Table v-show="courseList.length" :showSelect="false"
+                :tableHeader="tableHeader" :tableData="courseList" 
+                :total="1" :page="1" :pageSize="10"/>
         </div>
         <!-- 课程新增 -->
-        <a-modal
-            :title="editRow.courseNo ? '修改课程' : '新增课程'"
-            :visible="addVisible"
-            @cancel="handleCancel"
-            :footer="null"
-            :width="800"
-            >
-            <a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" @submit="handleSubmit">
-                <a-form-item label="课程名称（中）">
-                    <a-input
-                        v-decorator="[
-                            'courseNmCn',
-                            {
-                                rules: [{ required: true, message: '请输入课程名称（中文）' }],
-                                initialValue: editRow.courseNmCn
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="类型名称（英）">
-                    <a-input
-                        v-decorator="[
-                            'courseNmEn',
-                            {
-                                rules: [{ required: true, message: '请输入课程名称（英文）' }],
-                                initialValue: editRow.courseNmEn
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="课程级别">
-                    <a-select
-                        v-decorator="[
-                            'courseLevel',
-                            {
-                                rules: [{ required: true, message: '请选择课程级别' }],
-                                initialValue: editRow.courseLevel
-                            },
-                        ]"
-                        >
-                        <a-select-option v-for="(level) in courseLevelList"
-                            :value="level.value" :key="level.value">
-                            {{level.label}}
-                        </a-select-option>
-                    </a-select>
-                </a-form-item>
-                <a-form-item label="课程类型">
-                    <a-select
-                        v-decorator="[
-                            'typeNo',
-                            {
-                                rules: [{ required: true, message: '请选择课程类型' }],
-                                initialValue: editRow.typeNo
-                            },
-                        ]"
-                        >
-                        <a-select-option v-for="(type) in typeList"
-                            :value="type.typeNo" :key="type.typeNo">
-                            {{type.typeNmCn}}
-                        </a-select-option>
-                    </a-select>
-                </a-form-item>
-                <a-form-item label="课程教师">
-                    <a-select
-                        v-decorator="[
-                            'courseOwner',
-                            {
-                                initialValue: editRow.courseOwner
-                            },
-                        ]"
-                        >
-                        <a-select-option v-for="(teach) in teacherList"
-                            :value="teach.userNo" :key="teach.userNo">
-                            {{teach.userNm}}
-                        </a-select-option>
-                    </a-select>
-                </a-form-item>
-                <a-form-item label="课程状态">
-                    <a-select
-                        v-decorator="[
-                            'courseSt',
-                            {
-                                rules: [{ required: true, message: '请选择课程状态' }],
-                                initialValue: editRow.courseSt
-                            },
-                        ]"
-                        >
-                        <a-select-option :value="0">
-                            下架
-                        </a-select-option>
-                        <a-select-option :value="1">
-                            上架
-                        </a-select-option>
-                    </a-select>
-                </a-form-item>
-                <a-form-item label="收费状态">
-                    <a-select
-                        v-decorator="[
-                            'feeSt',
-                            {
-                                rules: [{ required: true, message: '请选择收费状态' }],
-                                initialValue: editRow.feeSt
-                            },
-                        ]"
-                        >
-                        <a-select-option :value="0">
-                            免费
-                        </a-select-option>
-                        <a-select-option :value="1">
-                            收费
-                        </a-select-option>
-                    </a-select>
-                </a-form-item>
-                <a-form-item label="课程价格（分）">
-                    <a-input
-                        v-decorator="[
-                            'coursePrice',
-                            {
-                                rules: [{ required: true, message: '请输入课程价格' }],
-                                initialValue: editRow.coursePrice
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="小组最小人数">
-                    <a-input
-                        v-decorator="[
-                            'teamSizeMin',
-                            {
-                                rules: [{ required: true, message: '请输入小组最小人数' }],
-                                initialValue: editRow.teamSizeMin
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="小组最大人数">
-                    <a-input
-                        v-decorator="[
-                            'teamSizeMax',
-                            {
-                                rules: [{ required: true, message: '请输入小组最大人数' }],
-                                initialValue: editRow.teamSizeMax
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="适合最小人群">
-                    <a-input
-                        v-decorator="[
-                            'targetAgeGroupMin',
-                            {
-                                rules: [{ required: true, message: '请输入适合最小人群' }],
-                                initialValue: editRow.targetAgeGroupMin
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="适合最大人群">
-                    <a-input
-                        v-decorator="[
-                            'targetAgeGroupMax',
-                            {
-                                rules: [{ required: true, message: '请输入适合最大人群' }],
-                                initialValue: editRow.targetAgeGroupMax
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="课程规模最小人数">
-                    <a-input
-                        v-decorator="[
-                            'courseCapacityMin',
-                            {
-                                rules: [{ required: true, message: '请输入课程规模最小人数' }],
-                                initialValue: editRow.courseCapacityMin
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="课程规模最大人数">
-                    <a-input
-                        v-decorator="[
-                            'courseCapacityMax',
-                            {
-                                rules: [{ required: true, message: '请输入课程规模最大人数' }],
-                                initialValue: editRow.courseCapacityMax
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="课程时长最小(周)">
-                    <a-input
-                        v-decorator="[
-                            'courseDurationMin',
-                            {
-                                rules: [{ required: true, message: '请输入课程时长' }],
-                                initialValue: editRow.courseDurationMin
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="课程时长最大(周)">
-                    <a-input
-                        v-decorator="[
-                            'courseDurationMax',
-                            {
-                                rules: [{ required: true, message: '请输入课程时长' }],
-                                initialValue: editRow.courseDurationMax
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
-                    <a-button type="primary" html-type="submit">
-                        {{editRow.courseNo ? '修改' : '新增'}}
-                    </a-button>
-                </a-form-item>
-            </a-form>
-        </a-modal>
+        <el-dialog
+            :title="(form.id ? '修改' : '新增') + '课程'"
+            :visible.sync="addVisible"
+            width="820px"
+            :before-close="handleCancel">
+            <el-form :model="form" :rules="rules" ref="form" label-width="160px">
+                <el-form-item label="课程名称（中）" prop="courseNmCn">
+                    <el-input v-model="form.courseNmCn" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="课程名称（英）" prop="courseNmEn">
+                    <el-input v-model="form.courseNmEn" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="课程级别" prop="courseLevel">
+                    <el-select v-model="form.courseLevel" placeholder="请选择">
+                        <el-option
+                            v-for="item in courseLevelList"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="课程类型" prop="typeNo">
+                    <el-select v-model="form.typeNo" placeholder="请选择">
+                        <el-option
+                            v-for="item in typeList"
+                            :key="item.typeNo"
+                            :label="item.typeNmCn"
+                            :value="item.typeNo">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="课程教师">
+                    <el-select v-model="form.courseOwner" placeholder="请选择">
+                        <el-option
+                            v-for="item in teacherList"
+                            :key="item.userNo"
+                            :label="item.userNm"
+                            :value="item.userNo">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="课程状态" prop="courseSt">
+                    <el-select v-model="form.courseSt" placeholder="请选择">
+                        <el-option label="下架" value="0"></el-option>
+                        <el-option label="上架" value="1"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="收费状态" prop="feeSt">
+                    <el-select v-model="form.feeSt" placeholder="请选择">
+                        <el-option label="免费" value="0"></el-option>
+                        <el-option label="收费" value="1"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="课程价格（分）" prop="coursePrice">
+                    <el-input v-model="form.coursePrice" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="小组最小人数" prop="teamSizeMin">
+                    <el-input v-model="form.teamSizeMin" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="小组最大人数" prop="teamSizeMax">
+                    <el-input v-model="form.teamSizeMax" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="适合最小人群" prop="targetAgeGroupMin">
+                    <el-input v-model="form.targetAgeGroupMin" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="适合最大人群" prop="targetAgeGroupMax">
+                    <el-input v-model="form.targetAgeGroupMax" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="课程规模最小人数" prop="courseCapacityMin">
+                    <el-input v-model="form.courseCapacityMin" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="课程规模最大人数" prop="courseCapacityMax">
+                    <el-input v-model="form.courseCapacityMax" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="课程时长最小(周)" prop="courseDurationMin">
+                    <el-input v-model="form.courseDurationMin" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="课程时长最大(周)" prop="courseDurationMax">
+                    <el-input v-model="form.courseDurationMax" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="卡片颜色" prop="courseColor">
+                    <el-input v-model="form.courseColor" class="color_input" placeholder="#开头十六进制颜色值"></el-input>
+                    <el-color-picker v-model="form.courseColor" class="color_picker"></el-color-picker>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="handleCancel">关 闭</el-button>
+                <el-button type="primary" @click="handleSubmit">{{form.courseNo ? '修改' : '新增'}}</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 <script>
-    import {Request, Post} from '@/api/request';
-    import axios from 'axios';
-    import baseUrl from '@/utils/baseUrl';
-    import Menu from '@/components/common/menu';
-    import {Modal} from 'ant-design-vue';
-    const columns = [
-        {
-            title: '课程编号',
-            dataIndex: 'courseNo',
-            key: 'courseNo',
-        }, {
-            title: '课程名称（中）',
-            dataIndex: 'courseNmCn',
-            key: 'courseNmCn',
-        }, {
-            title: '课程名称（英）',
-            dataIndex: 'courseNmEn',
-            key: 'courseNmEn',
-        }, {
-            title: '课程类别编号',
-            key: 'typeNo',
-            dataIndex: 'typeNo',
-        }, {
-            title: '课程导师编号',
-            key: 'courseOwner',
-            dataIndex: 'courseOwner',
-        }, {
-            title: '课程级别',
-            key: 'courseLevel',
-            dataIndex: 'courseLevel',
-        }, {
-            title: '课程状态',
-            key: 'courseSt',
-            dataIndex: 'courseSt',
-        }, {
-            title: '收费状态',
-            key: 'feeSt',
-            dataIndex: 'feeSt',
-        }, {
-            title: '课程价格（分）',
-            key: 'coursePrice',
-            dataIndex: 'coursePrice',
-        }, {
-            title: '小组最小人数',
-            key: 'teamSizeMin',
-            dataIndex: 'teamSizeMin',
-        }, {
-            title: '小组最大人数',
-            key: 'teamSizeMax',
-            dataIndex: 'teamSizeMax',
-        }, {
-            title: '适合最小人群',
-            key: 'targetAgeGroupMin',
-            dataIndex: 'targetAgeGroupMin',
-        }, {
-            title: '适合最大人群',
-            key: 'targetAgeGroupMax',
-            dataIndex: 'targetAgeGroupMax',
-        }, {
-            title: '课程规模最小人数',
-            key: 'courseCapacityMin',
-            dataIndex: 'courseCapacityMin',
-        }, {
-            title: '课程规模最大人数',
-            key: 'courseCapacityMax',
-            dataIndex: 'courseCapacityMax',
-        }, {
-            title: '操作',
-            key: 'action',
-            scopedSlots: { customRender: 'tags' }
-        }
-    ];
+    import {Request} from '@/api/request';
+    import Table from '@/components/common/table';
+    import {success, error, warn} from '@/assets/js/public';
+    
     export default {
         data() {
             return {
-                formLayout: 'horizontal',
-                form: this.$form.createForm(this, { name: 'course' }),
-                headers: {
-                    authorization: 'authorization-text',
+                form: {
+                    courseNmCn: '',
+                    courseNmEn: '',
+                    courseLevel: '',
+                    typeNo: '',
+                    courseOwner: '',
+                    courseSt: '',
+                    feeSt: '',
+                    coursePrice: '',
+                    teamSizeMin: '',
+                    teamSizeMax: '',
+                    targetAgeGroupMin: '',
+                    targetAgeGroupMax: '',
+                    courseCapacityMin: '',
+                    courseCapacityMax: '',
+                    courseDurationMin: '',
+                    courseDurationMax: '',
+                    courseColor: '#409EFF',
                 },
-                file: [],
+                rules: {
+                    courseNmCn: {required: true, message: '请输入课程名称(中文)', trigger: 'blur'},
+                    courseNmEn: {required: true, message: '请输入课程名称(英文)', trigger: 'blur'},
+                    courseLevel: {required: true, message: '请选择课程级别', trigger: 'blur'},
+                    typeNo: {required: true, message: '请输入课程类型', trigger: 'blur'},
+                    courseSt: {required: true, message: '请选择课程状态', trigger: 'blur'},
+                    feeSt: {required: true, message: '请选择收费状态', trigger: 'blur'},
+                    coursePrice: {required: true, message: '请输入课程价格', trigger: 'blur'},
+                    teamSizeMin: {required: true, message: '请输入小组最小人数', trigger: 'blur'},
+                    teamSizeMax: {required: true, message: '请输入小组最大人数', trigger: 'blur'},
+                    targetAgeGroupMin: {required: true, message: '请输入适合最小人群', trigger: 'blur'},
+                    targetAgeGroupMax: {required: true, message: '请输入适合最大人群', trigger: 'blur'},
+                    courseCapacityMin: {required: true, message: '请输入课程规模最小人数', trigger: 'blur'},
+                    courseCapacityMax: {required: true, message: '请输入课程规模最大人数', trigger: 'blur'},
+                    courseDurationMin: {required: true, message: '请输入课程时长', trigger: 'blur'},
+                    courseDurationMax: {required: true, message: '请输入课程时长', trigger: 'blur'},
+                    courseColor: {required: true, message: '请选择卡片颜色', trigger: 'blur'},
+                },
 
+                tableHeader: [],
                 courseList: [],
                 typeList: [],
                 teacherList: [],
@@ -328,20 +156,106 @@
                     {label: '基础课程', value: 0},
                     {label: '开拓课程', value: 1},
                     {label: '飞跃课程', value: 2},
+                    {label: '“创赢说”讲座', value: 3},
                 ],
-
-                editRow: {},
-                tableHeader: columns,
 
                 addVisible: false,
             };
         },
         created() {
+            this.setTableHeader();
             this.initData();
             this.getTeachList();
             this.getTypeList();
         },
         methods: {
+            setTableHeader() {
+                this.tableHeader = [
+                    {
+                        label: '课程编号',
+                        prop: 'courseNo',
+                        width: '260'
+                    }, {
+                        label: '课程名称（中）',
+                        prop: 'courseNmCn',
+                        width: '400'
+                    }, {
+                        label: '课程名称（英）',
+                        prop: 'courseNmEn',
+                        width: '400'
+                    }, {
+                        label: '课程类别编号',
+                        prop: 'typeNo',
+                        width: '300'
+                    }, {
+                        label: '课程导师编号',
+                        prop: 'courseOwner',
+                        width: '300'
+                    }, {
+                        label: '课程级别',
+                        prop: 'courseLevel',
+                    }, {
+                        label: '课程状态',
+                        prop: 'courseSt',
+                    }, {
+                        label: '收费状态',
+                        prop: 'feeSt',
+                    }, {
+                        label: '课程价格（分）',
+                        prop: 'coursePrice',
+                        width: '140'
+                    }, {
+                        label: '小组最小人数',
+                        prop: 'teamSizeMin',
+                        width: '120'
+                    }, {
+                        label: '小组最大人数',
+                        prop: 'teamSizeMax',
+                        width: '120'
+                    }, {
+                        label: '适合最小人群',
+                        prop: 'targetAgeGroupMin',
+                        width: '120'
+                    }, {
+                        label: '适合最大人群',
+                        prop: 'targetAgeGroupMax',
+                        width: '120'
+                    }, {
+                        label: '课程规模最小人数',
+                        prop: 'courseCapacityMin',
+                        width: '140'
+                    }, {
+                        label: '课程规模最大人数',
+                        prop: 'courseCapacityMax',
+                        width: '140'
+                    }, {
+                        label: '卡片颜色',
+                        prop: 'courseColor',
+                        width: '100'
+                    }, {
+                        label: '操作',
+                        prop: '',
+                        width: '300',
+                        slot: true,
+                        slotArr: [
+                            {
+                                type: 'btn',
+                                btnText: '课程描述',
+                                action: 'detail'
+                            }, {
+                                type: 'btn',
+                                btnText: '修改',
+                                action: 'edit'
+                            }, {
+                                type: 'btn',
+                                btnText: '删除',
+                                btnType: 'danger',
+                                action: 'del'
+                            }
+                        ]
+                    }
+                ];
+            },
             initData() {
                 Request({
                     url: 'course/query',
@@ -352,6 +266,8 @@
                         if (item.courseType && item.courseType.typeNo) {
                             item.typeNo = item.courseType.typeNo;
                         }
+                        item.feeSt += '';
+                        item.courseSt += '';
                         return item;
                     });
                     this.courseList = courseList;
@@ -382,34 +298,42 @@
                     this.typeList = typeList;
                 });
             },
-            edit(record) {
-                this.editRow = record;
+            edit(row) {
+                this.form = {
+                    courseNo: row.courseNo,
+                    courseNmCn: row.courseNmCn,
+                    courseNmEn: row.courseNmEn,
+                    courseLevel: row.courseLevel,
+                    typeNo: row.typeNo,
+                    courseOwner: row.courseOwner,
+                    courseSt: row.courseSt,
+                    feeSt: row.feeSt,
+                    coursePrice: row.coursePrice,
+                    teamSizeMin: row.teamSizeMin,
+                    teamSizeMax: row.teamSizeMax,
+                    targetAgeGroupMin: row.targetAgeGroupMin,
+                    targetAgeGroupMax: row.targetAgeGroupMax,
+                    courseCapacityMin: row.courseCapacityMin,
+                    courseCapacityMax: row.courseCapacityMax,
+                    courseDurationMin: row.courseDurationMin,
+                    courseDurationMax: row.courseDurationMax,
+                    courseColor: row.courseColor
+                };
                 this.addVisible = true;
             },
             del(record) {
-                let _this = this;
-                Modal.confirm({
-                    title: '确认删除?',
-                    content: '删除后数据不可恢复!',
-                    cancelText: '取消',
-                    okText: '确认',
-                    onOk() {
-                        return new Promise((resolve, reject) => {
-                            Request({
-                                url: 'course/delete',
-                                params: {
-                                    courseNo: record.courseNo
-                                }
-                            }).then(res => {
-                                if (res.code == 200) {
-                                    _this.$message.success('删除成功!');
-                                    _this.initData();
-                                }
-                                resolve();
-                            })
-                        }).catch(() => console.log('Oops errors!'));
-                    },
-                    onCancel() {},
+                warn('确认删除,删除后数据不可恢复?', () => {
+                    Request({
+                        url: 'course/delete',
+                        params: {
+                            courseNo: record.courseNo
+                        }
+                    }).then(res => {
+                        if (res.code == 200) {
+                            success('删除成功!');
+                            this.initData();
+                        }
+                    })
                 });
             },
             detail(record) {
@@ -425,21 +349,37 @@
             },
             handleCancel() {
                 this.addVisible = false;
-                this.editRow = {};
-                this.form.resetFields();
+                this.form = {
+                    courseNmCn: '',
+                    courseNmEn: '',
+                    courseLevel: '',
+                    typeNo: '',
+                    courseOwner: '',
+                    courseSt: '',
+                    feeSt: '',
+                    coursePrice: '',
+                    teamSizeMin: '',
+                    teamSizeMax: '',
+                    targetAgeGroupMin: '',
+                    targetAgeGroupMax: '',
+                    courseCapacityMin: '',
+                    courseCapacityMax: '',
+                    courseDurationMin: '',
+                    courseDurationMax: '',
+                    courseColor: '#409EFF'
+                };
             },
             handleSubmit(e) {
                 e.preventDefault();
-                this.form.validateFields((err, values) => {
-                    if (!err) {
-                        let params = values;
+                this.$refs.form.validate(valid => {
+                    if (valid) {
+                        let params = this.form;
                         if (!params.courseOwner) {
                             params.courseOwner = '';
                         }
                         let url = 'course/addCourse';
                         let desc = '新增成功!';
-                        if (this.editRow.courseNo) {
-                            params.courseNo = this.editRow.courseNo;
+                        if (params.courseNo) {
                             url = 'course/updateCourse';
                             desc = '修改成功!';
                         }
@@ -448,26 +388,23 @@
                             params: params,
                         }).then(res => {
                             if (res.code == 200) {
-                                this.$message.success(desc);
-                                this.addVisible = false;
-                                this.form.resetFields();
-                                this.editRow = {};
+                                success(desc);
+                                this.handleCancel();
                                 this.initData();
-                            } else {
-                                this.$message.error(res.desc);
+                            } else if (res.code !== '1001') {
+                                error(res.msg);
                             }
                         })
                     }
-
                 });
             },
         },
         components: {
-            Menu,
+            Table,
         }
     }
 </script>
-<style lang="less">
+<style lang="less" scoped>
     .curd {
         .ant-upload-list {
             display: none !important;
@@ -483,5 +420,10 @@
             width: 80px;
             height: 30px;
         }
+    }
+    .color_input {
+        float: left;
+        margin-right: 10px;
+        width: 200px;
     }
 </style>

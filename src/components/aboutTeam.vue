@@ -65,6 +65,7 @@
             }
         },
         created() {
+            this.$root.addTj(2);
         },
         methods: {
             selectTab(idx) {

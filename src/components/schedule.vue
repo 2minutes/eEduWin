@@ -6,7 +6,7 @@
             <ul class="course_list clearfix">
                 <li v-for="item in courseList" 
                     :key="item.courseNo" 
-                    :class="[item.clas]"
+                    :style="{backgroundColor: item.courseColor}"
                     @click="toVideo(item.courseNo)">{{zh ? item.courseNmCn : item.courseNmEn}}</li>
             </ul>
             <p v-show="!courseList.length" class="title empty">{{$t('video.empty')}}</p>
@@ -35,8 +35,8 @@
                         <span class="day">{{item.day ? item.day : ''}}</span>
                         <span class="course" 
                             v-for="course in item.courseList" 
-                            :class="[course.clas]"
-                            :title="zh ? course.courseNmCn : course.courseNmEn">{{zh ? course.courseNmCn : course.courseNmEn}}</span>
+                            :style="{backgroundColor: course.courseColor}"
+                            :title="zh ? course.courseNmCn : course.courseNmEn">{{item.courseColor}}{{zh ? course.courseNmCn : course.courseNmEn}}</span>
                     </li>
                 </ul>
             </div>
@@ -50,9 +50,9 @@
     import CommonFooter from '@/components/common/commonFooter';
     
     import {Request} from '@/api/request';
-    import {colors} from '@/assets/js/data';
     import {padStart} from '@/assets/js/public';
     export default {
+        name: 'schedule',
         data() {
             return {
                 year: 0,
@@ -71,6 +71,7 @@
         created() {
             this.getDate();
             this.getCourseList();
+            this.$root.addTj(11);
         },
         methods: {
             toVideo() {},
@@ -96,23 +97,16 @@
                         return;
                     }
                     let lists = res.courses ? res.courses : [];
-                    let colorMap = {};
-                    let copedColors = [].concat(colors);
                     lists = lists.map(list => {
-                        let {courseNo, courseNmCn, courseNmEn} = list;
-                        let random = parseInt(Math.random() * copedColors.length);
-                        let color = copedColors.splice(random, 1);
-                        color = 'back_' + color.join(',');
+                        let {courseNo, courseNmCn, courseNmEn, courseColor} = list;
                         let item = {
                             courseNo: courseNo,
                             courseNmCn: courseNmCn,
                             courseNmEn: courseNmEn,
-                            clas: color
+                            courseColor: courseColor
                         }
-                        colorMap[courseNo] = color;
                         return item;
                     });
-                    this.colorMap = colorMap;
                     this.courseList = lists;
                     this.queryCalendar(this.year, this.month);
                 });
@@ -180,7 +174,8 @@
                             courseNmCn: item.courseNameCn,
                             courseNmEn: item.courseNameEn,
                             courseNo: item.courseNo,
-                            clas: colorMap[item.courseNo]
+                            clas: colorMap[item.courseNo],
+                            courseColor: item.courseColor
                         })
                     }
                 }

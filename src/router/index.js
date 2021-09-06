@@ -20,21 +20,26 @@ let routeTitle = {
     'curd-course': '课程管理',
     'curd-activity': '活动管理',
     'curd-notice': '通告管理',
-    'curd-video': '视频管理'
+    'curd-video': '视频管理',
+    'card-home': '首页'
 };
 
 function formatRouter(routerArr, curdFlag = false) {
-    let routes = routerArr.keys().map((fileName) => {
+    let curdIdx = -1;
+    let routes = routerArr.keys().map((fileName, idx) => {
         const routerSplit = fileName.split('.');
         let routerName = routerSplit[1].replace('/', '');
         if (curdFlag) {
-            routerName = 'curd-' + routerName;
+            if (routerName === 'index') {
+                curdIdx = idx;
+            }
         }
         let component = routerArr(fileName).default;
         let title = routeTitle[routerName] ? routeTitle[routerName] : routerName;
         let routeItem = {
-            path: routerName === defaultPath ? '/' : (curdFlag ? '/curd' : '') + routerSplit[1],
-            name: routerName,
+            // path: routerName === defaultPath ? '/' : (curdFlag ? '/curd' : '') + routerSplit[1],
+            path: routerName === defaultPath ? '/' : curdFlag ? routerName : routerSplit[1],
+            name: curdFlag ? 'curd-' + routerName : routerName,
             meta: {
                 title: title,
             },
@@ -45,11 +50,14 @@ function formatRouter(routerArr, curdFlag = false) {
         }
         return routeItem;
     });
+    if (curdIdx != -1) {
+        routes.splice(curdIdx, 1);
+    }
     return routes;
 }
 
 const defaultPath = 'home';
-let keepAliveArr = ['enhancement'];
+let keepAliveArr = ['enhancement', 'schedule', 'course'];
 let defaultRouter = null;
 
 let routes = formatRouter(requireRoutes);
@@ -61,9 +69,15 @@ const createRouter = () => new Router({
     // mode: 'hash',
     mode: 'history', // require service support
     scrollBehavior: () => ({ y: 0 }),
-    routes: [...routes, ...curdRoutes]
+    routes: [
+        ...routes,
+        {
+            path: '/curd',
+            component: () => import('@/components/curd/index'),
+            children: [...curdRoutes]
+        }
+    ]
 });
-// console.log('router:', routes, curdRoutes)
 
 const router = createRouter()
 

@@ -49,7 +49,7 @@
 <script>
     import {mapGetters} from 'vuex';
     import {Request} from '@/api/request';
-    import {isEmail, isPassword} from '@/assets/js/public';
+    import {isEmail, isPassword, error, success} from '@/assets/js/public';
     export default {
         data() {
             return {
@@ -69,11 +69,11 @@
         methods: {
             getCaptcha() {
                 if (!this.email) {
-                    this.$message.error(this.zh ? '请输入邮箱地址!' : 'please enter email');
+                    error(this.zh ? '请输入邮箱地址!' : 'please enter email');
                     return;
                 }
                 if (!isEmail(this.email)) {
-                    this.$message.error(this.zh ? '邮箱地址错误' : 'please enter the correct Email Address');
+                    error(this.zh ? '邮箱地址错误' : 'please enter the correct Email Address');
                     return;
                 }
                 Request({
@@ -91,7 +91,7 @@
             signUp() {//注册
                 let errTip = this.checkSign();
                 if (errTip) {
-                    this.$message.error(errTip);
+                    error(errTip);
                     return;
                 }
                 let params = {
@@ -107,7 +107,7 @@
                     if (res.code != 200) {
                         this.getCaptcha();
                     } else {
-                        this.$message.success(this.zh ? '注册成功，请前往邮箱验证!' : 'register success, please go to email for verification!');
+                        success(this.zh ? '注册成功，请前往邮箱验证!' : 'register success, please go to email for verification!');
                         this.$store.dispatch('handleRegisterModel', false);
                     }
                 });

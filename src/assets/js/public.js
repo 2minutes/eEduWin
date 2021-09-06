@@ -1,5 +1,5 @@
 import store from '@/store/index';
-import {message} from 'ant-design-vue';
+import {Message, MessageBox} from 'element-ui'
 
 export function loading() {
     store.dispatch('handleLoading', true);
@@ -8,7 +8,7 @@ export function hideLoading() {
     let timer = setTimeout(() => {
         store.dispatch('handleLoading', false);
         clearTimeout(timer);
-    }, 1000)
+    }, 2000)
 }
 
 export function getScrollbarWidth(dom) {
@@ -88,6 +88,12 @@ export function getCourseTypeShort(courseType) {
         case 'English Literature & Composition':
             courseClass = 'English';
             break;
+        case 'Science':
+            courseClass = 'Science';
+            break;
+        case 'eEduWin Talk':
+            courseClass = 'Talk';
+            break;
         default: 
             courseClass = '';
     }
@@ -141,18 +147,53 @@ export function getFormParams(params) {
     return formData;
 }
 //提示
-export function error(txt = '', duration = 3, fn) {
-    message.error(txt, duration, () => {
-        fn && fn();
+export function error(text = '失败!', fn) {
+	Message({
+        message: text,
+        type: 'error',
+        onClose() {
+            if (fn) {
+                fn();
+            }
+        }
     });
 }
-export function success(txt = '', duration = 3, fn) {
-    message.success(txt, duration, () => {
-        fn && fn();
+export function success(text = '成功!', fn) {
+	Message({
+        message: text,
+        type: 'success',
+        onClose() {
+            if (fn) {
+                fn();
+            }
+        }
     });
 }
-export function warn(txt = '', duration = 3, fn) {
-    message.warn(txt, duration, () => {
-        fn && fn();
+export function warn(warnText = '是否确定?', fn, successText = '操作成功!', cancelText) {
+    MessageBox.confirm(warnText, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+    }).then(() => {
+        if (fn) {
+        	fn();
+        }
+    }).catch(() => {
+        if (cancelText) {
+            error(cancelText);
+        }
     });
+}
+
+//格式化下拉列表的选项，数组型 
+export function formatSelectData(data, labelName, valueName, allFlag = true) {
+	let arr = [];
+	for(var key in data) {
+		arr.push({
+			label: data[key][labelName],
+			value: data[key][valueName]
+		});
+	}
+	arr = allFlag ? [{label: '全部', value: ''}].concat(arr) : arr;
+	return arr;
 }

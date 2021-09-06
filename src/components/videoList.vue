@@ -33,7 +33,7 @@
     import CommonHeader from '@/components/common/commonHeader';
     import CommonFooter from '@/components/common/commonFooter';
     import {Request} from '@/api/request';
-    import {message} from 'ant-design-vue';
+    import {error} from '@/assets/js/public';
     export default {
         data() {
             return {
@@ -53,6 +53,7 @@
                 this.courseNo = query.no;
                 this.initData(query.no);
                 this.getVideoList(query.no);
+                this.$root.addTj(4, query.no);
             } else {
                 this.$router.replace({
                     path: '/schedule'
@@ -130,7 +131,7 @@
                 }).then(res => {
                     if (res.code == 200) {
                         if (!res.msg) {
-                            message.error(this.zh ? '暂无视频' : 'No Video.');
+                            error(this.zh ? '暂无视频' : 'No Video.');
                             return;
                         }
                         this.$store.commit('setUrl', res.msg);
@@ -286,7 +287,7 @@
                 margin-bottom: 20px;
                 margin-right: 15px;
                 width: 260px;
-                height: 210px;
+                height: 230px;
                 background: #fff;
                 .password_wrap {
                     position: relative;
@@ -367,8 +368,7 @@
                     padding-left: 10px;
                     box-sizing: border-box;
                     width: 100%;
-                    height: 30px;
-                    line-height: 30px;
+                    line-height: 20px;
                     font-size: 14px;
                     color: #8d5811;
                 }

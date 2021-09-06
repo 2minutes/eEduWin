@@ -1,165 +1,146 @@
 <template>
     <div class="curd clearfix">
-        <Menu />
         <div class="curd_right">
-            <a-button type="primary" @click="showAddModal">
+            <el-button type="primary" @click="showAddModal" size="small">
                 新增
-            </a-button>
-            <a-table :columns="tableHeader" :data-source="teaList">
-                <a slot="name" slot-scope="text">{{ text }}</a>
-                <span slot="customTitle">Name</span>
-                <span slot="tags" slot-scope="record">
-                    <a-tag color="green" @click="edit(record)">修改</a-tag>
-                    <a-tag color="red" @click="del(record)">删除</a-tag>
-                </span>
-            </a-table>
+            </el-button>
+            <Table v-show="teaList.length" :showSelect="false"
+                :tableHeader="tableHeader" :tableData="teaList" 
+                :total="1" :page="1" :pageSize="10"/>
         </div>
 
-        <a-modal
-            title="新增导师"
-            :visible="addVisible"
-            @cancel="handleCancel"
-            :footer="null"
-            :width="800"
-            >
-            <a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" @submit="handleSubmit">
-                <a-form-item label="Full Name">
-                    <a-input
-                        v-decorator="[
-                            'userNm',
-                            { 
-                                rules: [{ required: true, message: '请输入Full Name' }],
-                                initialValue: editRow.userNm 
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="导师简介（中文）">
-                    <a-textarea  :autoSize="{minRows:2, maxRows: 6}"
-                        :allowClear="true"
-                        v-decorator="[
-                            'descCn',
-                            { 
-                                rules: [{ required: true, message: '请输入中文简介' }],
-                                initialValue: editRow.descCn
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="导师简介（英文）">
-                    <a-textarea :autoSize="{minRows:2, maxRows: 6}"
-                        :allowClear="true"
-                        v-decorator="[
-                            'descEn',
-                            { 
-                                rules: [{ required: true, message: '请输入英文简介' }],
-                                initialValue: editRow.descEn
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <!-- <a-form-item v-show="!editRow.newsNo" label="新闻图片">
-                    <input class="file_btn" name="file" type="file" 
-                        accept="image/png,image/gif,image/jpeg" 
-                        @change="handleChange"/>
-                </a-form-item> -->
-                <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
-                    <a-button type="primary" html-type="submit">
-                        {{editRow.userNo ? '修改' : '新增'}}
-                    </a-button>
-                </a-form-item>
-            </a-form>
-        </a-modal> 
+        <el-dialog
+            :title="(form.userNo ? '修改' : '新增') + '导师'"
+            :visible.sync="addVisible"
+            width="820px"
+            :before-close="handleCancel">
+            <el-form :model="form" :rules="rules" ref="form" label-width="160px">
+                <el-form-item label="Full Name" prop="userNm">
+                    <el-input v-model="form.userNm" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="导师简介（中文）" prop="descCn">
+                    <el-input type="textarea" :autoSize="{minRows:2, maxRows: 6}" v-model="form.descCn" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="导师简介（英文）" prop="descEn">
+                    <el-input type="textarea" :autoSize="{minRows:2, maxRows: 6}" v-model="form.descEn" autocomplete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="handleCancel">关 闭</el-button>
+                <el-button type="primary" @click="handleSubmit">{{form.userNo ? '修改' : '新增'}}</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 <script>
-    import {Request, Post} from '@/api/request';
-    import axios from 'axios';
-    import baseUrl from '@/utils/baseUrl';
-    import Menu from '@/components/common/menu';
-    const columns = [
-        {
-            title: '教师编号',
-            dataIndex: 'userNo',
-            key: 'userNo',
-        }, {
-            title: '姓名',
-            dataIndex: 'userNm',
-            key: 'userNm',
-        }, {
-            title: '中文简介',
-            key: 'descCn',
-            dataIndex: 'descCn',
-        }, {
-            title: '英文简介',
-            key: 'descEn',
-            dataIndex: 'descEn',
-        }, {
-            title: '操作',
-            key: 'action',
-            scopedSlots: { customRender: 'tags' }
-        }
-    ];
+    import {Request} from '@/api/request';
+    import Table from '@/components/common/table';
+    import {success} from '@/assets/js/public';
+    
     export default {
         data() {
             return {
-                formLayout: 'horizontal',
-                form: this.$form.createForm(this, { name: 'tea' }),
-                headers: {
-                    authorization: 'authorization-text',
+                form: {
+                    userNm: '',
+                    descCn: '',
+                    descEn: '',
                 },
-                file: [],
+                rules: {
+                    userNm: {required: true, message: '请输入Full Name', trigger: 'blur'},
+                    descCn: {required: true, message: '请输入中文简介', trigger: 'blur'},
+                    descEn: {required: true, message: '请输入英文简介', trigger: 'blur'},
+                },
 
                 teaList: [],
-                editRow: {},
-                tableHeader: columns,
+                tableHeader: [],
 
                 addVisible: false,
             };
         },
         created() {
             this.initData();
+            this.setTableHeader();
         },
         methods: {
+            setTableHeader() {
+                this.tableHeader = [
+                    {
+                        label: '教师编号',
+                        prop: 'userNo',
+                        width: '300'
+                    }, {
+                        label: '姓名',
+                        prop: 'userNm',
+                        width: '200'
+                    }, {
+                        label: '中文简介',
+                        prop: 'descCn',
+                        width: '600'
+                    }, {
+                        label: '英文简介',
+                        prop: 'descEn',
+                        width: '600'
+                    }, {
+                        label: '操作',
+                        prop: '',
+                        width: '200',
+                        slot: true,
+                        slotArr: [
+                            {
+                                type: 'btn',
+                                btnText: '修改',
+                                action: 'edit'
+                            }, {
+                                type: 'btn',
+                                btnText: '删除',
+                                action: 'del'
+                            }
+                        ]
+                    }
+                ];
+            },
             initData() {
                 Request({
                     url: 'teacher/query',
                 }).then(res => {
                     let teaList = res.teachers ? res.teachers : [];
-                    teaList = teaList.map(item => {
-                        item.key = item.userNo;
-                        return item;
-                    });
                     this.teaList = teaList;
                 });
             },
-            edit(record) {
-                this.editRow = record;
+            edit(row) {
+                this.form = {
+                    userNo: row.userNo,
+                    userNm: row.userNm,
+                    descCn: row.descCn,
+                    descEn: row.descEn,
+                }
                 this.addVisible = true;
-            },
-            del(record) {
             },
             showAddModal() {
                 this.addVisible = true;
             },
             handleCancel() {
                 this.addVisible = false;
-                this.editRow = {};
-                this.form.resetFields();
+                this.form = {
+                    userNm: '',
+                    descCn: '',
+                    descEn: '',
+                }
             },
             handleSubmit(e) {
                 e.preventDefault();
-                this.form.validateFields((err, values) => {
-                    if (!err) {
+                this.$refs.form.validate(valid => {
+                    let form = this.form;
+                    if (valid) {
                         let params = {
-                            userNm: values.userNm,
-                            descCn: values.descCn,
-                            descEn: values.descEn,
+                            userNm: form.userNm,
+                            descCn: form.descCn,
+                            descEn: form.descEn,
                         };
                         let url = 'teacher/add';
                         let desc = '新增成功!';
-                        if (this.editRow.userNo) {
-                            params.userNo = this.editRow.userNo;
+                        if (form.userNo) {
+                            params.userNo = form.userNo;
                             url = 'teacher/update';
                             desc = '修改成功!';
                         }
@@ -168,10 +149,8 @@
                             params: params,
                         }).then(res => {
                             if (res.code == 200) {
-                                this.$message.success(desc);
-                                this.addVisible = false;
-                                this.form.resetFields();
-                                this.editRow = {};
+                                success(desc);
+                                this.handleCancel();
                                 this.initData();
                             }
                         })
@@ -179,32 +158,13 @@
 
                 });
             },
-            handleSelectChange(value) {
-                console.log(value);
-                this.form.setFieldsValue({
-                    note: `Hi, ${value === 'male' ? 'man' : 'lady'}!`,
-                });
-            },
-            handleChange(e) {
-                this.file = e.target.files[0];
-                // this.fileList = [info.file];
-            },
-            beforeUpload(file) {
-                return false;
-                let reader = new FileReader();
-                reader.readAsText(file);
-                reader.onload = e => {
-                    let uids = e.target.result.split('\r\n');
-                    return false;
-                }
-            }
         },
         components: {
-            Menu,
+            Table,
         }
     }
 </script>
-<style lang="less">
+<style lang="less" scoped>
     .news {
         .ant-upload-list {
             display: none !important;

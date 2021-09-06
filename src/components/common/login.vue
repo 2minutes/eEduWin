@@ -65,7 +65,7 @@
 <script>
     import {mapGetters} from 'vuex';
     import {Request} from '@/api/request';
-    import {isEmail, loginSave, encodeStr, decodeStr, isPassword} from '@/assets/js/public';
+    import {isEmail, loginSave, encodeStr, decodeStr, isPassword, error, success} from '@/assets/js/public';
     export default {
         data() {
             return {
@@ -87,11 +87,11 @@
         methods: {
             getCaptcha() {//获取验证码
                 if (!this.userName) {
-                    this.$message.error(this.$t('error.emailEmpty'));
+                    error(this.$t('error.emailEmpty'));
                     return;
                 }
                 if (!isEmail(this.userName)) {
-                    this.$message.error(this.$t('error.emailIncorrect'));
+                    error(this.$t('error.emailIncorrect'));
                     return;
                 }
                 let url = 'login/captcha';
@@ -119,7 +119,7 @@
                     }
                 }).then(res => {
                     if (res.code == 200) {
-                        this.$message.success(this.zh ? '请查看您的邮箱，通过邮箱里收到的验证码来重置密码!' : 'Please check your e-mail, use the verification code in your inbox to reset the password!');
+                        success(this.zh ? '请查看您的邮箱，通过邮箱里收到的验证码来重置密码!' : 'Please check your e-mail, use the verification code in your inbox to reset the password!');
                         this.mailCode = '';
                         this.code = '';
                         this.codeSrc = '';
@@ -156,7 +156,7 @@
             submit() {
                 let tip = this.checkSign();
                 if (tip) {
-                    this.$message.error(tip);
+                    error(tip);
                     return;
                 }
                 switch(this.pageType) {
@@ -181,7 +181,7 @@
                     }
                 }).then(res => {
                     if (res.code == 200) {
-                        this.$message.success('登录成功!');
+                        success('登录成功!');
                         this.$store.dispatch('handleLoginModel', false);
                         loginSave(res.token, res.userNm);
                         if (this.remember) {
@@ -208,7 +208,7 @@
                     }
                 }).then(res => {
                     if (res.code == 200) {
-                        this.$message.success(this.zh ? '重置密码成功，请登录!' : 'Password reset successful, please continue to login!');
+                        success(this.zh ? '重置密码成功，请登录!' : 'Password reset successful, please continue to login!');
                         this.pageType = 1;
                         this.getCaptcha();
                         this.code = '';

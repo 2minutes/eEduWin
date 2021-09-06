@@ -74,20 +74,19 @@
                 <span class="close" @click="hideQrcodeModel"></span>
             </div>
         </div>
-        <a-modal class="contact_modal" v-model="resultVisible"
+        <el-dialog class="contact_modal" :visible.sync="resultVisible"
             :footer="null" @cancel="handleCancel">
-            <a-icon class="result_icon success" type="smile" theme="outlined" />
+            <i class="el-icon-success success result_icon"></i>
             <p v-show="zh">谢谢您与我们联系！我们会尽快回复。</p>
             <p v-show="!zh">Thank you for contacting us!</p>
             <p v-show="!zh">We will back to you soon.</p>
-        </a-modal>
+        </el-dialog>
     </div>
 </template>
 <script>
     import {mapGetters} from 'vuex';
     import {Request} from '@/api/request';
-    import {isEmail} from '@/assets/js/public';
-    import {Modal} from 'ant-design-vue';
+    import {isEmail, error} from '@/assets/js/public';
     export default {
         data() {
             return {
@@ -142,7 +141,7 @@
 
             getCaptcha() {
                 if (!this.form.mobile) {
-                    this.$message.error(this.zh ? '请输入手机号!' : 'please enter phone!');
+                    error(this.zh ? '请输入手机号!' : 'please enter phone!');
                     return;
                 }
                 Request({
@@ -160,7 +159,7 @@
             submit() {
                 let tip = this.check();
                 if (tip) {
-                    this.$message.error(tip);
+                    error(tip);
                     return;
                 }
                 Request({
@@ -426,6 +425,11 @@
         .close {
             right: -20px;
             top: -20px;
+        }
+    }
+    .contact_modal {
+        .result_icon {
+
         }
     }
 </style>

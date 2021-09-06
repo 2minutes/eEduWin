@@ -15,7 +15,7 @@
 
 	        <p v-if="pageType == 0" class="detail_desc">[{{$t('enhaDetail.theme')}}]: {{zh ? detail.activityThemeZh : detail.activityThemeEn}}</p>
 
-	        <div class="detail_dates">
+	        <div class="detail_dates clearfix">
 	        	<!-- <div class="detail_date left">
 	        		<span>{{$t('enhaDetail.submissionDeadline')}}:</span>
 	        		<b>{{zh ? detail.submitEndTsCn : detail.submitEndTsEn}}</b>
@@ -23,6 +23,7 @@
 	        	<div class="detail_date right">
 	        		<span>{{$t('enhaDetail.participants')}}:</span>
 	        		<b>{{zh ? detail.attenderGradleZh : detail.attenderGradleEn}}</b>
+                    <img class="back" src="../assets/images/icon_cap.png" alt="">
 	        	</div>
 	        </div>
 
@@ -50,7 +51,7 @@
             </div>
 
         </div>
-        <div  class="detail_price_wrap">
+        <div :hidden="pageType == null || pageType == 1" class="detail_price_wrap">
             <p class="price_title">PRIZE:</p>
             <p class="price_list" v-for="(prize, prizeIdx) in (zh ? detail.prizeCn : detail.prizeEn)">{{prize}}</p>
            <img src="../assets/images/enha_bg_icon.png" />
@@ -181,7 +182,6 @@
         }
 	    .detail_title {
 	    	width: @defaultWidth;
-	    	height: 50px;
 	    	line-height: 50px;
 	    	font-size: 30px;
 	    	color: #000;
@@ -196,29 +196,40 @@
 	    .detail_dates {
 	    	margin-top: 20px;
 	    	width: 740px;
-	    	height: 66px;
+	    	min-height: 66px;
 	    	line-height: 66px;
 	    	color: #0f1646;
             font-size: 12px;
 	    	.detail_date {
-	    		padding: 0 15px;
+                display: flex;
+	    		padding: 15px;
 	    		float: left;
-	    		width: 365px;
-	    		&.left {
-	    			margin-right: 10px;
-                    background: #d8e6f1 url('../assets/images/icon_calendar.png') no-repeat 290px center;
-                    background-size: 40px 40px;
-	    		}
-                &.right {
-                    background: #d8e6f1 url('../assets/images/icon_cap.png') no-repeat 280px center;
-                    background-size: 44px 36px;
+	    		width: auto;
+                max-width: 1000px;
+                line-height: 30px;
+                background: #d8e6f1;
+                .back {
+                    float: left;
+                    margin-left: 10px;
+                    width: 44px;
+                    height: 36px;
                 }
+	    		// &.left {
+	    		// 	margin-right: 10px;
+                //     background: #d8e6f1 url('../assets/images/icon_calendar.png') no-repeat 290px center;
+                //     background-size: 40px 40px;
+	    		// }
+                // &.right {
+                //     background: #d8e6f1 url('../assets/images/icon_cap.png') no-repeat 280px center;
+                //     background-size: 44px 36px;
+                // }
 	    		span {
 	    			float: left;
 	    			margin-right: 20px;
 	    		}
 	    		b {
 	    			float: left;
+                    line-height: 30px;
 	    		}
 	    	}
 	    }

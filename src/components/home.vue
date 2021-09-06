@@ -135,6 +135,7 @@
         created() {
             this.initNews();
             this.initNotice();
+            this.$root.addTj(0);
         },
         methods: {
             initNews() {//获取新闻数据
@@ -189,9 +190,11 @@
             },
             showContactModel() {
                 this.$store.dispatch('handleContactModel', true);
+                this.$root.addTj(8);
             },
             showRegisterModel() {
                 this.$store.dispatch('handleRegisterModel', true);
+                this.$root.addTj(10);
             },
             toCourse() {
                 this.$router.push({

@@ -12,11 +12,20 @@
 
 <script>
     // import {mapGetters} from 'vuex';
+    import {addTj} from '@/api/accessTj';
     export default {
         name: 'App',
+        created() {
+            this.$root.addTj = this.addTj;
+        },
         // computed: {
         //     ...mapGetters(['loading']),
         // }
+        methods: {
+            addTj(type, courseNo = '') {
+                addTj(type, courseNo);
+            },
+        },
     }
 </script>
 

@@ -2,10 +2,15 @@
     <div class="app_container">
         <CommonHeader :blue="true" />
         <div class="verify_wrap app_content">
-            <a-card :title="title" style="width: 600px">
-                <p>{{$t('verify.thansk')}}, {{$t('verify.confirmEmail')}}<span>{{loginId}}</span></p>
-                <p><span @click="mailValidate">{{$t('verify.verifyEmail')}}</span></p>
-            </a-card>
+            <el-card style="width: 600px">
+                <div slot="header" class="clearfix">
+                    <p class="title">{{title}}</p>
+                </div>
+                <div>
+                    <p>{{$t('verify.thansk')}}, {{$t('verify.confirmEmail')}}<span>{{loginId}}</span></p>
+                    <p><span @click="mailValidate">{{$t('verify.verifyEmail')}}</span></p>
+                </div>
+            </el-card>
         </div>
         <CommonFooter />
     </div>
@@ -98,17 +103,18 @@
     .verify_wrap {
         margin: 20px auto;
         width: 1000px;
-        .ant-card {
+        .el-card {
             margin: 0 auto;
             background: #A8D0E6;
-            .ant-card-head {
+            .el-card__header {
+                font-size: 16px;
                 border-bottom: 1px solid #24305E;
             }
-            .ant-card-head-title {
+            .el-card__header .title {
                 font-weight: bold;
                 color: #24305E;
             }
-            .ant-card-body p {
+            .el-card__body p {
                 color: #24305E;
             }
             span {

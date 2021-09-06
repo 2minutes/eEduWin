@@ -1,138 +1,87 @@
 <template>
     <div class="curd clearfix">
-        <Menu />
         <div class="curd_right">
-            <a-button type="primary" @click="showAddModal">
-                新增
-            </a-button>
-            <a-table :columns="tableHeader" :data-source="newsList">
-                <a slot="name" slot-scope="text">{{ text }}</a>
-                <span slot="customTitle">Name</span>
-                <span slot="tags" slot-scope="record">
-                    <a-tag color="green" @click="edit(record)">修改</a-tag>
-                    <a-tag color="red" @click="del(record)">删除</a-tag>
-                </span>
-            </a-table>
+            <el-button type="primary" @click="showAddModal" size="small">新增</el-button>
+            <Table v-show="newsList.length" :showSelect="false"
+                :tableHeader="tableHeader" :tableData="newsList" 
+                :total="1" :page="1" :pageSize="10"/>
         </div>
-        <a-modal
-            :title="(editRow.newsNo ? '修改' : '新增') + '新闻'"
-            :visible="addVisible"
-            @ok="handleOk"
-            @cancel="handleCancel"
-            :footer="null"
-            :width="800"
-            >
-            <a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" @submit="handleSubmit">
-                <a-form-item label="新闻标题（中文）">
-                    <a-input
-                        v-decorator="[
-                            'newsTitleCn',
-                            { 
-                                rules: [{ required: true, message: '请输入中文标题' }],
-                                initialValue: editRow.newsTitleCn 
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="新闻标题（英文）">
-                    <a-input
-                        v-decorator="[
-                            'newsTitleEn',
-                            { 
-                                rules: [{ required: true, message: '请输入英文标题' }],
-                                initialValue: editRow.newsTitleEn 
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="新闻内容（中文）">
-                    <a-textarea  :autoSize="true"
-                        :allowClear="true"
+        <el-dialog
+            :title="(form.newsNo ? '修改' : '新增') + '新闻'"
+            :visible.sync="addVisible"
+            width="820px"
+            :before-close="handleCancel">
+            <el-form :model="form" :rules="rules" ref="form" label-width="160px">
+                <el-form-item label="新闻标题（中文）" prop="newsTitleCn">
+                    <el-input v-model="form.newsTitleCn" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="新闻标题（英文）" prop="newsTitleEn">
+                    <el-input v-model="form.newsTitleEn" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="新闻内容（中文）" prop="newsContextCn">
+                    <el-input type="textarea" v-model="form.newsContextCn" autocomplete="off"
                         placeholder="多段数据用#分隔"
-                        v-decorator="[
-                            'newsContextCn',
-                            { 
-                                rules: [{ required: true, message: '请输入中文新闻内容' }],
-                                initialValue: editRow.newsContextCn
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="新闻内容（英文）">
-                    <a-textarea :autoSize="{minRows:2, maxRows: 6}"
-                        :allowClear="true"
+                        :autosize="{minRows: 2, maxRows: 6}"></el-input>
+                </el-form-item>
+                <el-form-item label="新闻内容（英文）" prop="newsContextEn">
+                    <el-input type="textarea" v-model="form.newsContextEn" autocomplete="off"
                         placeholder="多段数据用#分隔"
-                        v-decorator="[
-                            'newsContextEn',
-                            { 
-                                rules: [{ required: true, message: '请输入英文新闻内容' }],
-                                initialValue: editRow.newsContextEn
-                            },
-                        ]"
-                        />
-                </a-form-item>
-                <a-form-item label="新闻图片">
-                    <img class="news_pic" v-if="editRow.newsPic" :src="editRow.newsPic" @click="handlePreview(editRow.newsPic)" />
-                    <input class="file_btn" name="file" type="file" 
+                        :autosize="{minRows: 2, maxRows: 6}"></el-input>
+                </el-form-item>
+                <el-form-item label="封面图片">
+                    <el-image  v-if="form.newsPic" class="news_pic"
+                        :src="form.newsPic" @click="handlePreview(form.newsPic)" >
+                    </el-image>
+                    <input class="file_btn" name="file" type="file" ref="file"
                         accept="image/png,image/gif,image/jpeg" 
                         @change="handleChange"/>
-                </a-form-item>
-                <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
-                    <a-button type="primary" html-type="submit">
-                        {{editRow.newsNo ? '修改' : '新增'}}
-                    </a-button>
-                </a-form-item>
-            </a-form>
-        </a-modal> 
+                </el-form-item>
+                <el-form-item label="新闻图片/视频">
+                    <el-image  v-if="form.contentPic" class="news_pic"
+                        :src="form.contentPic" @click="handlePreview(form.contentPic)" >
+                    </el-image>
+                    <input class="file_btn" name="file" type="file" ref="contentFile"
+                        accept="image/*,video/*" 
+                        @change="handleContentFileChange"/>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="handleCancel">关 闭</el-button>
+                <el-button type="primary" @click="handleSubmit">{{form.newsNo ? '修改' : '新增'}}</el-button>
+            </div>
+        </el-dialog>
 
-        <a-modal :visible="previewVisible" :footer="null" 
+        <el-dialog :visible.sync="previewVisible" :footer="null" 
             @cancel="handlePreview()">
             <img alt="example" style="width: 100%" :src="previewImgUrl" />
-        </a-modal>
+        </el-dialog>
     </div>
 </template>
 <script>
     import {Request} from '@/api/request';
-    import axios from 'axios';
-    import Menu from '@/components/common/menu';
+    import Table from '@/components/common/table';
     import {Modal} from 'ant-design-vue';
-    const columns = [
-        {
-            title: '新闻编号',
-            dataIndex: 'newsNo',
-            key: 'newsNo',
-        }, {
-            title: '中文标题',
-            dataIndex: 'newsTitleCn',
-            key: 'newsTitleCn',
-        }, {
-            title: '英文标题',
-            dataIndex: 'newsTitleEn',
-            key: 'newsTitleEn',
-        }, {
-            title: '中文内容',
-            key: 'newsContextCn',
-            dataIndex: 'newsContextCn',
-        }, {
-            title: '英文内容',
-            key: 'newsContextEn',
-            dataIndex: 'newsContextEn',
-        }, {
-            title: '操作',
-            key: 'action',
-            scopedSlots: { customRender: 'tags' }
-        }
-    ];
+    import {success, error, warn} from '@/assets/js/public';
     export default {
         data() {
             return {
-                formLayout: 'horizontal',
-                form: this.$form.createForm(this, { name: 'news' }),
+                form: {
+                    newsTitleCn: '',
+                    newsTitleEn: '',
+                    newsContextCn: '',
+                    newsContextEn: '',
+                },
+                rules: {
+                    newsTitleCn: {required: true, message: '请输入中文标题', trigger: 'blur'},
+                    newsTitleEn: {required: true, message: '请输入英文标题', trigger: 'blur'},
+                    newsContextCn: {required: true, message: '请输入中文新闻内容', trigger: 'blur'},
+                    newsContextEn: {required: true, message: '请输入英文新闻内容', trigger: 'blur'},
+                },
                 file: null,
+                contentFile: null,
 
                 newsList: [],
-                editRow: {},
-                tableHeader: columns,
+                tableHeader: [],
 
                 addVisible: false,
                 previewVisible: false,
@@ -140,83 +89,125 @@
             };
         },
         created() {
+            this.setTableHeader();
             this.initData();
         },
         methods: {
+            setTableHeader() {
+                this.tableHeader = [
+                    {
+                        label: '新闻编号',
+                        prop: 'newsNo',
+                        width: '260'
+                    }, {
+                        label: '中文标题',
+                        prop: 'newsTitleCn',
+                        width: '300'
+                    }, {
+                        label: '英文标题',
+                        prop: 'newsTitleEn',
+                        width: '300'
+                    }, {
+                        label: '中文内容',
+                        prop: 'newsContextCn',
+                        width: '800'
+                    }, {
+                        label: '英文内容',
+                        prop: 'newsContextEn',
+                        width: '800'
+                    }, {
+                        label: '操作',
+                        prop: '',
+                        width: '200',
+                        slot: true,
+                        slotArr: [
+                            {
+                                type: 'btn',
+                                btnText: '修改',
+                                action: 'edit'
+                            }, {
+                                type: 'btn',
+                                btnText: '删除',
+                                action: 'del'
+                            }
+                        ]
+                    }
+                ];
+            },
             initData() {
                 Request({
                     url: 'news/query',
                 }).then(res => {
                     let newsList = res.news ? res.news : [];
-                    newsList = newsList.map(item => {
-                        item.key = item.newsNo;
-                        return item;
-                    });
                     this.newsList = newsList;
                 });
             },
-            edit(record) {
-                this.editRow = record;
+            edit(row) {
+                this.form = {
+                    newsNo: row.newsNo,
+                    newsTitleCn: row.newsTitleCn,
+                    newsTitleEn: row.newsTitleEn,
+                    newsContextCn: row.newsContextCn,
+                    newsContextEn: row.newsContextEn,
+                    newsPic: row.newsPic
+                };
                 this.addVisible = true;
             },
             del(record) {
-                let _this = this;
-                Modal.confirm({
-                    title: '确认删除?',
-                    content: '删除后数据不可恢复!',
-                    cancelText: '取消',
-                    okText: '确认',
-                    onOk() {
-                        return new Promise((resolve, reject) => {
-                            Request({
-                                url: 'news/delete',
-                                params: {
-                                    newsNo: record.newsNo
-                                }
-                            }).then(res => {
-                                if (res.code == 200) {
-                                    _this.$message.success('删除成功!');
-                                    _this.initData();
-                                }
-                                resolve();
-                            })
-                        }).catch(() => console.log('Oops errors!'));
-                    },
-                    onCancel() {},
+                warn('确认删除，删除后数据不可恢复？', () => {
+                    Request({
+                        url: 'news/delete',
+                        params: {
+                            newsNo: record.newsNo
+                        }
+                    }).then(res => {
+                        if (res.code == 200) {
+                            success('删除成功!');
+                            this.initData();
+                        }
+                    })
                 });
             },
             showAddModal() {
                 this.addVisible = true;
             },
-            handleOk() {},
             handleCancel() {
                 this.addVisible = false;
-                this.editRow = {};
-                this.form.resetFields();
+                this.form = {
+                    newsTitleCn: '',
+                    newsTitleEn: '',
+                    newsContextCn: '',
+                    newsContextEn: '',
+                };
                 this.file = null;
+                this.$refs.file.value = '';
             },
             handleSubmit(e) {//size
                 e.preventDefault();
                 let file = this.file;
                 if (file && file.size > 1024 * 1024) {
-                    this.$message.error('图片过大，请选择小于1M的图片!');
+                    error('图片过大，请选择小于1M的图片!');
                     return;
                 }
-                this.form.validateFields((err, values) => {
-                    if (!err) {
+                this.$refs.form.validate(valid => {
+                    if (valid) {
+                        let form = this.form;
                         let formData = new FormData();
-                        formData.append('newsTitleCn', values.newsTitleCn);
-                        formData.append('newsContextCn', values.newsContextCn);
-                        formData.append('newsTitleEn', values.newsTitleEn);
-                        formData.append('newsContextEn', values.newsContextEn);
-                        if (this.file) {
+                        formData.append('newsTitleCn', form.newsTitleCn);
+                        formData.append('newsContextCn', form.newsContextCn);
+                        formData.append('newsTitleEn', form.newsTitleEn);
+                        formData.append('newsContextEn', form.newsContextEn);
+                        if (file) {
                             formData.append('file', file);
+                        }
+                        if (this.contentFile) {
+                            formData.append('file1', this.contentFile);
                         }
                         let url = 'news/add';
                         let msg = '新增成功!';
-                        if (this.editRow.newsNo) {
+                        if (form.newsNo) {
                             url = 'news/update';
-                            formData.append('newsNo', this.editRow.newsNo);
+                            formData.append('newsNo', form.newsNo);
                             msg = '修改成功!';
                         }
                         Request({
@@ -225,7 +216,7 @@
                             params: formData,
                         }).then(res => {
                             if (res.code == 200) {
-                                this.$message.success(msg);
+                                success(msg);
                                 this.initData();
                                 this.handleCancel();
                             }
@@ -237,14 +228,8 @@
             handleChange(e) {
                 this.file = e.target.files[0];
             },
-            beforeUpload(file) {
-                return false;
-                let reader = new FileReader();
-                reader.readAsText(file);
-                reader.onload = e => {
-                    let uids = e.target.result.split('\r\n');
-                    return false;
-                }
+            handleContentFileChange(e) {
+                this.contentFile = e.target.files[0];
             },
             handlePreview(imgUrl = '') {
                 this.previewImgUrl = imgUrl;
@@ -252,11 +237,11 @@
             },
         },
         components: {
-            Menu,
+            Table,
         }
     }
 </script>
-<style lang="less">
+<style lang="less" scoped>
     .news {
         .ant-upload-list {
             display: none !important;

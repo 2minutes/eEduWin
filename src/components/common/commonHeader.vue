@@ -34,7 +34,7 @@
                 <div v-show="panelFlag" class="panel clearfix">
                     <p class="panel_item" @click="toAccount">
                         <span class="panel_icon list"></span>
-                        <span class="panel_txt">{{$t('header.hi')}}, Hanpu_Philip!</span>
+                        <span class="panel_txt">{{$t('header.hi')}}, {{userName}}!</span>
                     </p>
                     <p class="panel_item" @click="toSchedule">
                         <span class="panel_icon people"></span>
@@ -109,6 +109,7 @@
                 });
             },
             toAccount() {
+                this.panelFlag = false;
                 this.$router.push({
                     path: '/account',
                 });
@@ -136,9 +137,15 @@
             },
             handleLoginModel(flag) {
                 this.$store.dispatch('handleLoginModel', true);
+                if (flag) {
+                    this.$root.addTj(9);
+                }
             },
             handleRegisterModel(flag) {
                 this.$store.dispatch('handleRegisterModel', true);
+                if (flag) {
+                    this.$root.addTj(10);
+                }
             },
             loginOut() {//退出登录
                 Request({
@@ -146,6 +153,7 @@
                 }).then(res => {
                     if (res.code == 200) {
                         loginClear();
+                        this.handlePanel();
                     }
                 })
             },
@@ -158,10 +166,12 @@
                 this.$router.push({
                     path: '/schedule'
                 });
+                this.handlePanel();
             },
 
             showContactModel() {
                 this.$store.dispatch('handleContactModel', true);
+                this.$root.addTj(8);
             },
             toTop() { //返回顶部
                 let dom = this.$refs.head;

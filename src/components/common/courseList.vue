@@ -1,9 +1,9 @@
 <template>
 	<div class="course_content clearfix"
 		:id="elemId">
-		<p class="course_title">{{courTitle}}</p>
-		<p class="course_desc">{{courDesc}}</p>
-		<div class="course_filter">
+		<p v-show="courList.length" class="course_title">{{courTitle}}</p>
+		<p v-show="courList.length" class="course_desc">{{courDesc}}</p>
+		<div v-show="courList.length" class="course_filter">
 			<div class="course_filter_btn">
 				<span>{{$t('course.filter')}}</span>
 				<ul class="course_filter_items">
@@ -16,7 +16,7 @@
 			<span v-show="courList.length > lineNums" @click="viewMore" class="course_filter_more button">View More {{moreFlag ? '-' : '+'}}</span>
 		</div>
 
-		<ul class="course_filtered_types clearfix">
+		<ul v-show="courList.length" class="course_filtered_types clearfix">
 			<li v-for="(filt, idx) in filteredList">
 				{{zh ? filt.typeNmCn : filt.typeNmEn}}<span class="course_filtered_types_close" @click="deleteFilter(filt.typeNo)"></span>
 			</li>
@@ -81,6 +81,7 @@
 					params: {
 						courseLevel: this.level,
 						typeNo: this.filterNoList.join(','),
+						courseSt: 1
 					}
 				}).then(res => {
 					if (res.code == 200) {
@@ -333,8 +334,8 @@
 					background: #9b856e;
 					border-radius: 4px 4px 0 0;
 					filter: opacity(0.5);
-          -webkit-filter: grayscale(40%);
-					&.Math {
+          			-webkit-filter: grayscale(40%);
+					&.Math, &.Science {
 						background: linear-gradient(228deg, #E5A641, #FF4141);
 					}
 					&.Comp {

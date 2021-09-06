@@ -10,11 +10,15 @@ import VueI18n from 'vue-i18n';
 import En from '@/assets/lang/en';
 import Zh from '@/assets/lang/zh';
 
+
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+
 // import {
     // Button, message, Form, Input, Select, Upload, Modal, Table, Tag,
 // } from 'ant-design-vue';
-import Antd, {message} from 'ant-design-vue'
-import 'ant-design-vue/dist/antd.css';
+// import Antd, {message} from 'ant-design-vue'
+// import 'ant-design-vue/dist/antd.css';
 
 import store from './store';
 
@@ -36,8 +40,9 @@ const i18n = new VueI18n({
         'en': En,
     }
 });
-Vue.use(Antd);
-Vue.prototype.$message = message;
+// Vue.use(Antd);
+Vue.use(ElementUI);
+// Vue.prototype.$message = message;
 
 /* eslint-disable no-new */
 new Vue({

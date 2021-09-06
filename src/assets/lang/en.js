@@ -130,10 +130,12 @@ export default  {
 
         foundationCourses: 'Foundation Courses',
         foundationCoursesDesc: 'Fundamental courses to develop broad knowledge base and comprehensive skill set ',
-        capstoneCourses: 'Capstone Courses',
+        capstoneCourses: 'Enrichment Courses',
         capstoneCoursesDesc: 'Multifaceted courses to provide exercises of integrating theory and knowledge into potential solutions to real-world problems',
-        enrichmentCourses: 'Enrichment Courses',
+        enrichmentCourses: 'Capstone Courses',
         enrichmentCoursesDesc: 'Enlightening courses taught and led by current university professors and industry experts to bring exceptional learning experience and unique perspectives',
+        talkCourses: 'eEduWin Talk',
+        talkCoursesDesc: 'Inspire creativity, innovation and entrepreneurship to stimulate young learners’ inner potential',
         seeCourses: 'SEE COURSES',
 
         math: 'Math',
@@ -241,6 +243,7 @@ export default  {
         overview: 'Overview',
         overviewDesc: 'We are a group of experienced educators and professionals based in the US, Canada, UK, and China, who are passionate about providing accurate, conscientious, and best-in-class admission guidance to students. We strive to assist students in obtaining admissions into the most competitive universities around the world for them based on their strengths, background, and interests. We take pride and make it our utmost priority in making the most appropriate recommendations, planning and strategies for each and every applicant. We aim to make a difference in the lives of young students toward achieving their dreams and potential.',
         fullServicesDesc: 'A full-service university application counselling and planning boutique',
+        down: 'Download Service Package',
 
         ourGoals: 'Our Goals',
         goalsProvide: 'To provide high quality and reliable guidance and counselling for applicants in the application process',
@@ -299,8 +302,7 @@ export default  {
     },
     stories: {
         ourStories: 'Our Stories',
-        ourStoriesDesc1: 'The predecessor of eEduWin is a university admissions consulting boutique.',
-        ourStoriesDesc2: 'Since 2010, we have helped many students with a solid track record of success. ',
+        ourStoriesDesc1: "As an admission consulting organization, eEduWin has helped dozens of students enter their dream universities with a solid record of success in the past 20 years. eEduWin’s priorities have always been to create a personalized program for each of our applicants in strategic planning, learning approaches, and school selections. Taking into consideration of the applicants’ strengths, background, and interests, eEduWin is proud to be able to guide and support them all the way to the world's most pristine universities. Every year, eEduWin is dedicated to serve no more than 20 VIP students, aiming to create a perfect portfolio and fulfill the applicants’ expectations.",
         topOffersCaps: 'TOP OFFERS',
         successfulCasesCaps: 'SUCCESSFUL CASES',
         ourExpertise: 'Our Expertise',
@@ -339,6 +341,16 @@ export default  {
         columbiaEconomicsActivities: 'Leadership: Co-Editor in chief of school newspaper; Founder and President of the Art Club',
         columbiaEconomicsAchievements: 'Achievements: History research paper published in a national magazine; Third place at the annual national essay contest; First place at History Day Los Angeles, Third place in CA; First place in technical theater at the Drama Teachers Association of Southern California annual festival; Special art talent (winner of the national stamp design competition one year and the winning drawing was the special Christmas stamp for that year issued nationally); first place in LA Custume design one year',
 
+        MITComputerScience: 'MIT-Computer Science',
+        MITComputerScienceAcademic: 'Academic: Unweighted GPA 4.0, 10 AP courses, and 2 college courses',
+        MITComputerScienceActivities: 'Activities: 4 years of school Olympic science team member; research and publish papers in computer science and mathematical modeling',
+        MITComputerScienceAchievements: 'Achievements: Multiple awards in computer programming; 6 years of fencing training with many good results in international and domestic competitions ranking excellent in his own age group in the United States, state-level Olympic science award, AMC12 advanced to AIME.',
+
+        California: 'California Institute of Technology, Chemistry, $40,000 scholarship',
+        CaliforniaAcademic: 'Academic: Unweighted GPA 4.0, 10 AP courses, ACT full score',
+        CaliforniaActivities: 'Activities: 3 years of high school scientific research experience, participated in scientific research directed by UCLA and California Institute of Technology professors, and published papers; 8 years of performing arts training in Hollywood and experience in many commercials and film shootings.',
+        CaliforniaAchievements: 'Achievements: Martial arts master with two bronze medals in the World Martial Arts Competition;  the film he starred in won a gold medal at the world film festival.',
+        
         andMore: 'And More',
     },
     verify: {

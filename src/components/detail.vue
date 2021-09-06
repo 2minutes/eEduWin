@@ -8,44 +8,66 @@
             <i></i>
             <span>{{zh ? detail.courseNmCn : detail.courseNmEn}}</span>
         </div>
-        <div class="course_info clearfix">
-            <div class="left clearfix">
-                <p class="course_title">{{zh ? detail.courseNmCn : detail.courseNmEn}}</p>
-                <p class="course_desc">{{zh ? detail.descCn : detail.descEn}}</p>
-                <div class="course_other_info clearfix">
-                    <p class="other_item"><b>{{$t('detail.subjectArea')}}:</b>{{zh ? detail.typeNmCn : detail.typeNmEn}}</p>
-                    <p class="other_item"><b>{{$t('common.targetAgeGroup')}}:</b>{{zh ? detail.gradeCn : detail.gradeEn}}</p>
-                    <p class="other_item"><b>{{$t('common.courseCapacity')}}:</b>{{zh ? detail.capacityCn : detail.capacityEn}}</p>
-                    <p class="other_item"><b>{{$t('common.teamSize')}}:</b>{{zh ? detail.teamSizeCn : detail.teamSizeEn}}</p>
-                    <p class="other_item"><b>{{$t('detail.projectDuration')}}:</b>{{zh ? detail.durationCn : detail.durationEn}}</p>
+        <div class="course_wrap app_content">
+            <template v-if="courseType != '' && courseType != 'Talk'">
+                <div class="course_info  clearfix">
+                    <div class="left clearfix">
+                        <p class="course_title">{{zh ? detail.courseNmCn : detail.courseNmEn}}</p>
+                        <p class="course_desc">{{zh ? detail.descCn : detail.descEn}}</p>
+                        <div class="course_other_info clearfix">
+                            <p class="other_item"><b>{{$t('detail.subjectArea')}}:</b>{{zh ? detail.typeNmCn : detail.typeNmEn}}</p>
+                            <p class="other_item"><b>{{$t('common.targetAgeGroup')}}:</b>{{zh ? detail.gradeCn : detail.gradeEn}}</p>
+                            <p class="other_item"><b>{{$t('common.courseCapacity')}}:</b>{{zh ? detail.capacityCn : detail.capacityEn}}</p>
+                            <p class="other_item"><b>{{$t('common.teamSize')}}:</b>{{zh ? detail.teamSizeCn : detail.teamSizeEn}}</p>
+                            <p class="other_item"><b>{{$t('detail.projectDuration')}}:</b>{{zh ? detail.durationCn : detail.durationEn}}</p>
+                        </div>
+                        <!-- <div class="course_btns clearfix">
+                            <span class="btn_checkout" @click="checkOut">Checkout Now</span>
+                            <span class="btn_cart" @click="addCart">Add to Cart <i class="icon_cart"></i></span>
+                            <span class="btn_share" @click="share">Share<i class="icon_share"></i></span>
+                        </div> -->
+                        <span class="course_status" :class="{'active': detail.courseSt === 1, 'disabled': detail.courseSt === 0}">{{detail.courseSt === 1 ? $t("detail.statusOpen") : $t("detail.statusClose")}}</span>
+                    </div>
+                    <img v-if="detail.typeImg" class="right" :src="require(`../assets/images/course_${detail.typeImg}.png`)">
                 </div>
-                <!-- <div class="course_btns clearfix">
-                    <span class="btn_checkout" @click="checkOut">Checkout Now</span>
-                    <span class="btn_cart" @click="addCart">Add to Cart <i class="icon_cart"></i></span>
-                    <span class="btn_share" @click="share">Share<i class="icon_share"></i></span>
-                </div> -->
-                <span class="course_status" :class="detail.status === 1 ? 'active': ''">{{detail.courseSt === 1 ? $t("detail.statusOpen") : $t("detail.statusClose")}}</span>
-            </div>
-            <img v-if="detail.typeImg" class="right" :src="require(`../assets/images/course_${detail.typeImg}.png`)">
-        </div>
+                
+                <div class="course_intro clearfix">
+                    <p class="course_intro_title">{{$t('detail.courseRequirement')}}</p>
+                    <p class="course_intro_li" v-for="(requ) in (zh ? detail.requirementCn : detail.requirementEn)">+ {{requ}}</p>
+                </div>
+                <div class="course_intro clearfix">
+                    <p class="course_intro_title">{{$t('detail.instructor')}}:</p>
+                    <p class="course_intro_li" v-for="(inst) in (zh ? detail.instructorCn : detail.instructorEn)">+ {{inst}}</p>
+                </div>
+                <div class="course_objectives clearfix">
+                    <p class="objective_title">{{$t('detail.courseObjectives')}}</p>
+                    <p class="objective_li">{{zh ? detail.objectivesCn : detail.objectivesEn}}</p>
+                </div>
+                <div class="takeaways_and_features clearfix">
+                    <p class="course_intro_title">{{$t('detail.courseHighlights')}}:</p>
+                    <p class="course_intro_li" v-for="(high) in (zh ? detail.highlightsCn : detail.highlightsEn)">+ {{high}}</p>
+                </div>
+            </template>
+        
+            <template v-if="courseType != '' && courseType === 'Talk'">
+                <div class="course_info talk clearfix">
+                    <p class="course_title">{{zh ? detail.courseNmCn : detail.courseNmEn}}</p>
+                    
+                    <div class="course_intro clearfix" v-for="list in detail.descList" :key="list.id">
+                        <p class="course_intro_title">{{zh ? list.descTitleCn : list.descTitleEn}}</p>
+                        <p class="course_intro_li" v-for="(item, idx) in (zh ? list.courseDescCn : list.courseDescEn)" :key="list.id + idx">{{item}}</p>
+                    </div>
+                </div>
+                <video-player v-if="src"  class="video-player-box"
+                    ref="videoPlayer"
+                    :options="playerOptions"
+                    :playsinline="true"
+                    customEventName="customstatechangedeventname"
 
-        <div class="course_intro clearfix">
-            <p class="course_intro_title">{{$t('detail.courseRequirement')}}</p>
-            <p class="course_intro_li" v-for="(requ) in (zh ? detail.requirementCn : detail.requirementEn)">+ {{requ}}</p>
-        </div>
-
-        <div class="course_intro clearfix">
-            <p class="course_intro_title">{{$t('detail.instructor')}}:</p>
-            <p class="course_intro_li" v-for="(inst) in (zh ? detail.instructorCn : detail.instructorEn)">+ {{inst}}</p>
-        </div>
-
-        <div class="course_objectives clearfix">
-            <p class="objective_title">{{$t('detail.courseObjectives')}}</p>
-            <p class="objective_li">{{zh ? detail.objectivesCn : detail.objectivesEn}}</p>
-        </div>
-        <div class="takeaways_and_features clearfix">
-            <p class="course_intro_title">{{$t('detail.courseHighlights')}}:</p>
-            <p class="course_intro_li" v-for="(high) in (zh ? detail.highlightsCn : detail.highlightsEn)">+ {{high}}</p>
+                    @statechanged="playerStateChanged($event)"
+                    @ready="playerReadied">
+                </video-player>
+            </template>
         </div>
         <CommonFooter />
     </div>
@@ -55,6 +77,7 @@
     import CommonFooter from '@/components/common/commonFooter';
     import {Request} from '@/api/request';
     import {getCourseTypeShort, joinNum} from '@/assets/js/public';
+    import {videoPlayer} from 'vue-video-player';
     export default {
         data() {
             return {
@@ -63,6 +86,24 @@
                     status: 1,
                 },
                 courseNo: '',
+                courseType: '',
+
+                video: null,
+                src: '',
+                playerOptions: {
+                    // videojs options
+                    muted: true,
+                    language: 'en',
+                    playbackRates: [0.7, 1.0, 1.5, 2.0],
+                    sources: [{
+                        type: "video/mp4",
+                        src: '',
+                    }],
+                    width: '820px',
+                    height: '460px',
+                    poster: "",
+                    notSupportedMessage: this.$i18n.locale == 'zh' ? '此视频暂无法播放，请稍后再试' : "This video can't play right now. Please try again later",
+                },
             }
         },
         created() {
@@ -87,16 +128,25 @@
                         detail.courseNmEn = course.courseNmEn;
                         detail.courseNo = course.courseNo;
                         detail.courseDuration = course.courseDuration;
+                        detail.courseSt = course.courseSt;
+                        let typeShort;
                         if (course.courseType && course.courseType.typeNo) {
                             detail.typeNmCn = course.courseType.typeNmCn;
                             detail.typeNmEn = course.courseType.typeNmEn;
-                            detail.typeImg = getCourseTypeShort(course.courseType.typeNmEn);
+                            typeShort = getCourseTypeShort(course.courseType.typeNmEn);
+                            detail.typeImg = typeShort === 'Science' ? 'Math' : typeShort;
+                        }
+                        if (typeShort === 'Talk') {
+                            detail.descList = this.formatCouseDesc(course.courseDesc);
+                            this.detail = detail;
+                            this.courseType = typeShort;  
+                            this.getVideoList(detail.courseNo);
+                            return;
                         }
                         let grades = joinNum(course.targetAgeGroupMin, course.targetAgeGroupMax);
                         let capacity = joinNum(course.courseCapacityMin, course.courseCapacityMax);
                         let teamSize = joinNum(course.teamSizeMin, course.teamSizeMax);
                         let duration = joinNum(course.courseDurationMin, course.courseDurationMax);
-
 
                         detail.gradeCn = grades ? grades + ' 年级' : '-';
                         detail.gradeEn = grades ? 'Grades ' + grades  : '-';
@@ -115,8 +165,31 @@
                         detail.durationEn = duration ? duration + ' Weeks' : '-';
                         Object.assign(detail, this.getCourseDesc(course.courseDesc));
                         this.detail = detail;
+                        this.courseType = typeShort;
                     }
                 });
+            },
+            getVideoList(courseNo) {
+                Request({
+                    url: 'video/queryByChair',
+                    method: 'post',
+                    params: {
+                        courseNo: courseNo
+                    }
+                }).then(res => {
+                    if (res.code == 1001) {
+                        this.$router.push('/');
+                        return;
+                    } else if (res.code == 200) {
+                        let list = res.videos ? res.videos : [];
+                        if (!list.length) {
+                            return;
+                        }
+                        let video = list[list.length - 1];
+                        this.video = video;
+                        this.getVideoSource(video.videoUrl);
+                    }
+                })
             },
             getCourseDesc(descList) {//获取课程的各种描述
                 if (!descList) {
@@ -150,6 +223,14 @@
                 }
                 return desc;
             },
+            formatCouseDesc(descList) {
+                descList = descList.map(item => {
+                    item.courseDescCn = item.courseDescCn.split('#');
+                    item.courseDescEn = item.courseDescEn.split('#');
+                    return item;
+                });
+                return descList;
+            },
             checkOut() {
                 this.$router.push({
                     path: '/payment'
@@ -166,6 +247,25 @@
                     path: url
                 });
             },
+
+            getVideoSource(url) {
+                if (!url) {
+                    return false;
+                }
+                let split = url.split('.');
+                let suffix = split[split.length - 1];
+                if (suffix && ['webm', 'ogg', '3gp', 'mp4'].includes(suffix)) {
+                    this.src = url;
+                    this.playerOptions.sources = [{
+                        type: `video/${suffix}`,
+                        src: url
+                    }];
+                } else {
+                    error(this.zh ? '视频格式错误' : 'Video format error')
+                }
+            },
+            playerReadied() {
+            }
         },
         computed: {
             zh() {
@@ -173,7 +273,7 @@
             }
         },
         components: {
-            CommonHeader, CommonFooter,
+            CommonHeader, CommonFooter, videoPlayer
         },
     }
 </script>
@@ -203,23 +303,19 @@
             transform: rotate(135deg);
         }
     }
+    .course_wrap {
+        margin: 20px auto;
+        width: @defaultWidth;
+        flex-shrink: 0;
+    }
     .course_info {
-        margin: 0 auto;
+        margin: 20px auto;
         width: @defaultWidth;
         color: #000;
         .left {
             float: left;
             width: 550px;
             height: 100%;
-            .course_title {
-                padding-top: 10px;
-                padding-bottom: 10px;
-                width: 100%;
-                line-height: 36px;
-                font-size: 26px;
-                color: @defaultColor;
-                font-weight: bold;
-            }
             .course_desc {
                 width: 100%;
                 line-height: 20px;
@@ -292,9 +388,12 @@
                 line-height: 34px;
                 font-size: 14px;
                 font-weight: bold;
-                color: #f00;
+                color: #fff;
                 &.active {
                     color: #2EAA1D;
+                }
+                &.disabled {
+                    color: #f00;
                 }
             }
         }
@@ -303,6 +402,23 @@
             width: 370px;
             height: 240px;
         }
+        &.talk {
+            background: url('../assets/images/course_Talk.png') no-repeat top right;
+        }
+    }
+    .video-player-box {
+        float: left;
+        margin: 20px auto;
+        width: @defaultWidth;
+    }
+    .course_title {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        width: 100%;
+        line-height: 36px;
+        font-size: 26px;
+        color: @defaultColor;
+        font-weight: bold;
     }
     .course_intro {
         position: relative;

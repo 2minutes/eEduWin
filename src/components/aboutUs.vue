@@ -82,7 +82,8 @@
                 refList: ['about', 'who', 'why', 'what'],
             }
         },
-        mounted() {
+        created() {
+            this.$root.addTj(1);
         },
         methods: {
             toPosition(refName, idx) {//点击about us的1.1, 1.2左侧滚动到相应位置
